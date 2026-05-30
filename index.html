@@ -1,0 +1,1153 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>湖北省98件消费者权益信息公开申请行政法合规审计联动大屏</title>
+    <!-- Tailwind CSS (CDN Fallback to ensure perfect preview rendering) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js (CDN Fallback) -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- FontAwesome Icons (CDN Fallback) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700;900&display=swap');
+        .font-gongwen {
+            font-family: 'Noto Serif SC', 'Songti SC', 'SimSun', serif;
+        }
+        /* 隐藏滚动条但保留功能 */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans min-h-screen flex flex-col antialiased">
+
+    <!-- 全局提示框 -->
+    <div id="toast" class="fixed top-5 left-1/2 transform -translate-x-1/2 z-50 bg-slate-900 text-white px-6 py-3 rounded-full shadow-2xl transition-all duration-300 ease-out text-sm flex items-center space-x-2 opacity-0 pointer-events-none scale-95">
+        <span id="toast-message">已重置全局所有的图表和搜索过滤！</span>
+    </div>
+
+    <!-- 顶部政务风格导航栏 -->
+    <header class="bg-slate-900 text-white border-b border-slate-800 shadow-xl sticky top-0 z-30 shrink-0">
+        <div class="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="flex items-center space-x-3">
+                <div class="bg-red-600 p-2 rounded">
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                    </svg>
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold tracking-wider flex items-center gap-2 font-gongwen">
+                        依法申请公开数据分析32班3组小组作业
+                        <span class="text-xs bg-red-600 text-white px-2 py-0.5 rounded font-sans font-normal">98件专项卷宗</span>
+                    </h1>
+                    <p class="text-xs text-slate-400 mt-0.5">县级市场监督管理局办理的保护消费者权益的案件数量分析</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-3">
+                <button onclick="resetAllFilters()" class="text-xs bg-slate-800 hover:bg-slate-700 text-slate-200 px-4 py-2 rounded border border-slate-700 transition flex items-center gap-1">
+                    <i class="fa-solid fa-rotate-left mr-1"></i>重置全局过滤
+                </button>
+                <div class="text-xs text-slate-400 text-right hidden sm:block">
+                    <div>当前审计标准：《中华人民共和国政府信息公开条例》</div>
+                    <div>数据节点：2026年5月23日</div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- 顶置核心数据指标卡（KPI Panels） -->
+    <section class="bg-slate-900 text-white pb-6 pt-2 px-4 sm:px-6 lg:px-8 border-b border-slate-800 shrink-0">
+        <div class="max-w-[1600px] mx-auto grid grid-cols-2 md:grid-cols-5 gap-4">
+            <div class="bg-slate-800/50 p-4 rounded-lg border border-slate-700/60 shadow hover:border-slate-600 transition">
+                <div class="text-xs text-slate-400"><i class="fa-solid fa-folder-open text-blue-400 mr-1.5"></i>总申请件数</div>
+                <div class="text-3xl font-extrabold text-blue-400 mt-1">98 <span class="text-sm font-normal text-slate-400">件</span></div>
+                <div class="text-[10px] text-slate-500 mt-1">Hubei province cases</div>
+            </div>
+            <div class="bg-slate-800/50 p-4 rounded-lg border border-slate-700/60 shadow hover:border-slate-600 transition">
+                <div class="text-xs text-slate-400"><i class="fa-solid fa-circle-check text-emerald-400 mr-1.5"></i>合规及基本合规</div>
+                <div class="text-3xl font-extrabold text-emerald-400 mt-1">25 <span class="text-sm font-normal text-slate-400">件</span></div>
+                <div class="text-xs text-emerald-500 mt-1">占比 25.5% (规范示范)</div>
+            </div>
+            <div class="bg-slate-800/50 p-4 rounded-lg border border-slate-700/60 shadow hover:border-slate-600 transition">
+                <div class="text-xs text-slate-400"><i class="fa-solid fa-clock text-red-400 mr-1.5"></i>行政不作为 (逾期)</div>
+                <div class="text-3xl font-extrabold text-red-400 mt-1">30 <span class="text-sm font-normal text-slate-400">件</span></div>
+                <div class="text-xs text-red-500 mt-1">占比 30.6% (纠错高危)</div>
+            </div>
+            <div class="bg-slate-800/50 p-4 rounded-lg border border-slate-700/60 shadow hover:border-slate-600 transition">
+                <div class="text-xs text-slate-400"><i class="fa-solid fa-triangle-exclamation text-amber-400 mr-1.5"></i>法律适用错误</div>
+                <div class="text-3xl font-extrabold text-amber-400 mt-1">22 <span class="text-sm font-normal text-slate-400">件</span></div>
+                <div class="text-xs text-amber-500 mt-1">占比 22.4% (纠错重点)</div>
+            </div>
+            <div class="bg-slate-800/50 p-4 rounded-lg border border-slate-700/60 shadow hover:border-slate-600 transition col-span-2 md:col-span-1">
+                <div class="text-xs text-slate-400"><i class="fa-solid fa-gavel text-rose-500 mr-1.5"></i>整体可诉讼/复议率</div>
+                <div class="text-3xl font-extrabold text-rose-500 mt-1">74.5 <span class="text-sm font-normal text-slate-400">%</span></div>
+                <div class="text-xs text-rose-400 mt-1">共约 73 件存在行政违法瑕疵</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 三版联动核心等高视窗 (高度闭环 800px) -->
+    <main class="flex-grow max-w-[1600px] w-full mx-auto p-4 sm:p-6 lg:p-8 grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
+
+        <!-- ==================== 左侧版图（lg:col-span-4）：图表与指标列 (高度 800px) ==================== -->
+        <section class="lg:col-span-4 flex flex-col gap-6 h-[800px]">
+            
+            <!-- 卡片一：图表一（行政行为回复定性占比） (高度 380px) -->
+            <div class="bg-white p-5 rounded-xl shadow-md border border-slate-200 h-[380px] flex flex-col justify-between">
+                <h2 class="text-xs font-bold text-slate-800 flex items-center justify-between border-b border-slate-100 pb-2">
+                    <span><i class="fa-solid fa-chart-pie text-blue-600 mr-1.5"></i>图表一：行政行为回复定性占比</span>
+                    <span class="text-[11px] text-slate-400 font-normal">点击扇区筛选案卷</span>
+                </h2>
+                <div class="relative flex-grow flex items-center justify-center h-52">
+                    <canvas id="replyTypeChart" style="display: block; box-sizing: border-box; height: 285.7px; width: 454.7px;" width="682" height="428"></canvas>
+                </div>
+                <div id="chart-selection-tip" class="text-[10px] text-slate-500 text-center font-semibold bg-slate-50 py-1.5 rounded border border-dashed border-slate-200">
+                    💡 点击图表任意区域，右侧案卷抽屉可实现动态联动
+                </div>
+            </div>
+
+            <!-- 卡片二：图表二 + 审计关键风险指标 (高度 396px) -->
+            <div class="bg-white p-5 rounded-xl shadow-md border border-slate-200 h-[396px] flex flex-col justify-between">
+                <h2 class="text-xs font-bold text-slate-800 flex items-center justify-between border-b border-slate-100 pb-2">
+                    <span><i class="fa-solid fa-chart-column text-indigo-600 mr-1.5"></i>图表二：地市受案量分布与法治水位线</span>
+                    <span class="text-[11px] text-slate-400 font-normal">点击柱条按市筛选</span>
+                </h2>
+                <!-- 压缩高度的柱状图 -->
+                <div class="relative h-32 flex-grow">
+                    <canvas id="cityChart" style="display: block; box-sizing: border-box; height: 224.3px; width: 454.7px;" width="682" height="336"></canvas>
+                </div>
+                
+                <!-- 审计指标合并嵌入 -->
+                <div class="space-y-2 mt-2 border-t border-slate-100 pt-3">
+                    <div>
+                        <div class="flex justify-between text-[10px] mb-0.5">
+                            <span class="text-slate-600 font-medium">《条例》38条"加工分析"豁免滥用拒绝</span>
+                            <span class="font-bold text-amber-600 font-mono">22.4%</span>
+                        </div>
+                        <div class="w-full bg-slate-100 rounded-full h-1.5">
+                            <div class="bg-amber-500 h-1.5 rounded-full" style="width: 22.4%"></div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="flex justify-between text-[10px] mb-0.5">
+                            <span class="text-slate-600 font-medium">程序不作为：严重超期未复/未依法送达</span>
+                            <span class="font-bold text-red-600 font-mono">30.6%</span>
+                        </div>
+                        <div class="w-full bg-slate-100 rounded-full h-1.5">
+                            <div class="bg-red-500 h-1.5 rounded-full" style="width: 30.6%"></div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="flex justify-between text-[10px] mb-0.5">
+                            <span class="text-slate-600 font-medium">事实认定瑕疵：行政处罚与投诉咨询混淆</span>
+                            <span class="font-bold text-orange-600 font-mono">12.2%</span>
+                        </div>
+                        <div class="w-full bg-slate-100 rounded-full h-1.5">
+                            <div class="bg-orange-500 h-1.5 rounded-full" style="width: 12.2%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- ==================== 中间版图（lg:col-span-4）：红黑榜与综合报告 (高度 800px) ==================== -->
+        <section class="lg:col-span-4 h-[800px]">
+            <div class="bg-white rounded-xl shadow-md border border-slate-200 overflow-hidden flex flex-col h-[800px]">
+                
+                <!-- 头部标签页切换 -->
+                <div class="flex border-b border-slate-200 bg-slate-50 shrink-0">
+                    <button onclick="switchDocTab('red')" id="btn-tab-red" class="flex-1 py-3 text-center text-xs font-bold border-r border-slate-200 text-red-700 bg-white border-t-2 border-t-red-600">
+                        🔴 红榜：松滋市(合规范本)
+                    </button>
+                    <button onclick="switchDocTab('black')" id="btn-tab-black" class="flex-1 py-3 text-center text-xs font-bold border-r border-slate-200 text-slate-500 hover:bg-slate-100">
+                        ⚫ 黑榜：通山县(典型违法)
+                    </button>
+                    <button onclick="switchDocTab('report')" id="btn-tab-report" class="flex-1 py-3 text-center text-xs font-bold border-r border-slate-200 text-slate-500 hover:bg-slate-100">
+                        📜 综合判定书
+                    </button>
+                </div>
+
+                <!-- 标签页一：红榜公文 (松滋市依申请公开答复书一字不差无损复刻) -->
+                <div id="tab-red" class="p-5 flex-grow overflow-y-auto font-gongwen no-scrollbar relative flex flex-col justify-between h-[720px]">
+                    <div>
+                        <div class="text-center text-red-600 text-[10px] font-bold uppercase tracking-widest mb-1">湖北省政府信息公开红榜范本</div>
+                        
+                        <div class="border-b-2 border-red-600 pb-1 mb-4">
+                            <div class="text-center text-red-600 text-lg font-extrabold tracking-wider py-1 font-gongwen font-serif">松滋市市场监督管理局</div>
+                            <div class="text-center text-red-500 text-[10px] font-serif flex flex-col items-center">
+                                <span>松市监依复〔2026〕4号</span>
+                            </div>
+                        </div>
+
+                        <div class="text-[10.5px] text-slate-700 space-y-3 leading-relaxed text-justify">
+                            <div class="font-bold text-slate-900 text-[11.5px]">严春雨:</div>
+                            
+                            <p class="indent-6">
+                                本局于2026年4月23日收到你通过线上方式提交的《政府信息公开申请书》。你申请公开的内容为:2025年度至今(即2025年1月1日至2026年4月23日)市场监督管理局办理的保护消费者权益的案件数量以及案件数量完结率。
+                            </p>
+                            
+                            <p class="indent-6">
+                                经审查,根据《中华人民共和国政府信息公开条例》第三十六条第(二)项的规定,现答复如下:
+                            </p>
+                            
+                            <div class="bg-red-50/50 border border-red-100 rounded p-2.5 my-1 border-l-2 border-l-red-500 text-slate-900">
+                                <p class="font-bold text-[11px] leading-relaxed">
+                                    2025年1月1日至2026年4月23日,本局办理保护消费者权益案件220件,其中已结案178件,结案率为80.9%(178/220)。未结案件均在法定期限内办理中。
+                                </p>
+                            </div>
+                            
+                            <p class="indent-6">
+                                本局统计的“保护消费者权益案件”,特指依据《中华人民共和国消费者权益保护法》及《侵害消费者权益行为处罚办法》等法律法规,针对消费者在购买、使用商品或接受服务过程中,其合法权益受到直接侵害的行为而作出的行政处罚案件。不包括涉及市场竞争秩序、知识产权、登记注册、特种设备安全等以维护其他行政管理秩序为主要目的的案件。
+                            </p>
+                            
+                            <p class="indent-6">
+                                如对本答复不服,可以在收到本答复书之日起60日内,依法向松滋市人民政府申请行政复议。
+                            </p>
+                        </div>
+                        
+                        <div class="mt-4 text-[9.5px] text-slate-500 space-y-0.5 border-t border-dashed border-slate-200 pt-2.5">
+                            <p>● 地址: 松滋市新江口街道民主路169号</p>
+                            <p>● 电话: 0716-6228400</p>
+                        </div>
+                    </div>
+
+                    <!-- 盖章 -->
+                    <div class="absolute bottom-28 right-8 flex flex-col items-center opacity-85 pointer-events-none scale-75">
+                        <div class="w-24 h-24 rounded-full border-2 border-red-500 flex items-center justify-center text-center text-[7px] font-bold text-red-500 font-serif leading-3 relative">
+                            <span class="absolute transform -rotate-12 w-16">松滋市市场监督管理局<br><br><span class="text-xs">★</span><br><br>2026年4月30日</span>
+                        </div>
+                    </div>
+
+                    <div class="pt-2 border-t border-dashed border-slate-200 mt-2 shrink-0">
+                        <span class="text-xs font-bold text-slate-800">💡 审计专家评析：</span>
+                        <p class="text-[10px] text-slate-600 leading-normal mb-1.5">
+                            松滋市局的答复堪称全省最高合规典范！不仅在法定期限内极速直接公开办件数据及结案率，更难得的是对“保护消费者权益案件”做出了极为严谨且高度符合行政法理的口径界定。
+                        </p>
+                        <button onclick="openAndSearchCase(51)" class="w-full py-1.5 bg-red-50 text-red-700 rounded text-xs font-bold hover:bg-red-100 transition border border-red-200 flex items-center justify-center gap-1">
+                            <i class="fa-solid fa-folder-open"></i>调取松滋市审计卷宗 (NO.051 严春雨案)
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 标签页二：黑榜公文 (通山县汪锦琦原装公文精密一字不差复刻) -->
+                <div id="tab-black" class="p-5 flex-grow overflow-y-auto font-gongwen no-scrollbar relative flex flex-col justify-between h-[720px] bg-stone-50/50 hidden">
+                    <div>
+                        <div class="text-center text-stone-500 text-[10px] font-bold uppercase tracking-widest mb-1">行政行为严重违法纠错件</div>
+                        
+                        <div class="border-b border-stone-400 pb-1 mb-4">
+                            <div class="text-center text-stone-800 text-lg font-extrabold tracking-wider py-1 font-gongwen">通山县市场监督管理局</div>
+                            <div class="text-center text-stone-600 text-xs font-serif flex flex-col items-start px-2 space-y-1">
+                                <span class="font-bold text-slate-900 text-sm">汪锦琦:</span>
+                                <span class="text-[10px] text-stone-500">通市监依复〔2026〕第1号</span>
+                            </div>
+                        </div>
+
+                        <div class="text-[11px] text-stone-800 space-y-4 leading-relaxed text-justify">
+                            <div class="text-center font-bold text-xs mb-1">政府信息公开申请答复书</div>
+                            
+                            <p class="indent-6">
+                                本机关于2026年5月9日收到您(你单位)通过在线提交的《政府信息公开申请书》。
+                            </p>
+                            <p class="indent-6">
+                                经审查,您申请公开的“2025年1月1日至12月31日期间,受理的消费者投诉、举报数量以及办理的侵害消费者权益类行政处罚案件立案数、结案数”,属于本机关的内部事务信息。
+                            </p>
+                            <p class="indent-6">
+                                根据《咸宁市市场监督管理局政府2026年信息公开指南》(网址:<a target="_blank" class="text-blue-600 hover:underline" href="http://scjg.xianning.gov.cn/xxgk/xxgkzn/202602/t20260226_4277730.shtml">http://scjg.xianning.gov.cn/xxgk/xxgkzn/202602/t20260226_4277730.shtml</a>)第二条第七款第三项的规定,所述事项不属于政府信息公开范围,同时,依据《政府信息公开条例》第十六条第一款、第三十六条第(三)项的规定,本机关决定不予公开。
+                            </p>
+                            <p class="indent-6">
+                                如对本答复不服,可以在收到本答复之日起60日内向通山县人民政府申请行政复议,或者在6个月内向通山县人民法院提起行政诉讼。
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- 盖章 -->
+                    <div class="absolute bottom-28 right-8 flex flex-col items-center opacity-75 pointer-events-none scale-75">
+                        <div class="w-24 h-24 rounded-full border-2 border-red-500 flex items-center justify-center text-center text-[7px] font-bold text-red-500 font-serif leading-3 relative">
+                            <span class="absolute transform -rotate-12 w-16">通山县市场监督管理局<br><br><span class="text-xs">★</span><br><br>2026年5月19日</span>
+                        </div>
+                    </div>
+
+                    <div class="pt-2 border-t border-dashed border-stone-300 mt-4 shrink-0">
+                        <span class="text-xs font-bold text-stone-900">🚨 行政法纠错判定：</span>
+                        <p class="text-[10px] text-stone-600 leading-normal mb-1.5">
+                            <b>严重适用法律错误！</b>行政处罚案件立案数、结案数是对外履职核心事实成果，不属于“内部事务信息”。
+                        </p>
+                        <button onclick="openAndSearchCase(83)" class="w-full py-1.5 bg-stone-800 text-white rounded text-xs font-bold hover:bg-stone-700 transition flex items-center justify-center gap-1 shadow-sm">
+                            <i class="fa-solid fa-triangle-exclamation"></i> 调取通山县纠错案卷 (NO.083 汪锦琦案)
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 标签页三：综合判定书 -->
+                <div id="tab-report" class="p-5 flex-grow overflow-y-auto font-gongwen no-scrollbar leading-relaxed text-xs hidden">
+                    <h3 class="text-center font-bold text-slate-950 text-sm mb-4">湖北省98件依申请公开消费者案件数据<br>行政法治审查综合判定书</h3>
+                    
+                    <div class="space-y-4 text-slate-700">
+                        <div>
+                            <span class="font-bold text-slate-900 block">一、加工分析条款（《条例》第38条）存在普遍性滥用</span>
+                            <p class="indent-4 mt-1">在全省98件个案中，有高达<b>22件</b>以“需要加工分析”、“人工筛选统计”为由予以拒绝。案件数量作为行政机关履职的基本结构化数据，不属于需要重新进行复杂政策研究、重塑事实的“加工分析”，以此为由拒绝构成实体违法，可被复议/诉讼撤销。</p>
+                        </div>
+                        <div>
+                            <span class="font-bold text-slate-900 block">二、“案件”与“投诉举报”行政法概念混淆</span>
+                            <p class="indent-4 mt-1"><b>12件</b>答复中，行政机关混淆了“投诉举报件数量”与 “立案查处罚款案件数量”。例如红安局、大悟局等直接将消费投诉举报登记数充当“案件数量”公开，存在答非所问、事实认定不清的司法瑕疵。</p>
+                        </div>
+                        <div>
+                            <span class="font-bold text-slate-900 block">三、行政不作为比率高，送达程序严重失范</span>
+                            <p class="indent-4 mt-1">高达<b>30件</b>申请呈现“行政不作为”状态。部分机关如<b>仙桃局（闫鑫案）、襄城区局（刘星驰案）</b>在系统点击办结却未向申请人有效发送邮件或邮寄，导致答复未依法送达生效，构成程序违法。</p>
+                        </div>
+                        <div>
+                            <span class="font-bold text-slate-900 block">四、结论与整改建议</span>
+                            <p class="indent-4 mt-1">全省各地市市场监督管理部门应统一统计口径，严格区分投诉量与行政处罚立案数。严禁通过电话诱导撤回、要求签署《撤回声明书》等非法定程序性规避手段。</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- ==================== 右侧版图（lg:col-span-4）：专项分析与案卷抽屉检索 (高度 800px) ==================== -->
+        <section class="lg:col-span-4 flex flex-col gap-6 h-[800px]">
+
+            <!-- 卡片一：核心问题专项分析模块 (高度 380px) -->
+            <div class="bg-white rounded-xl shadow-md border border-slate-200 overflow-hidden flex flex-col h-[380px]">
+                
+                <div class="flex border-b border-slate-200 bg-slate-50 shrink-0">
+                    <button onclick="switchAnalysisTab('ent')" id="btn-analysis-ent" class="flex-1 py-3 text-center text-xs font-bold border-r border-slate-200 text-blue-700 bg-white border-t-2 border-t-blue-600">
+                        ⚖️ 实体违法剖析
+                    </button>
+                    <button onclick="switchAnalysisTab('proc')" id="btn-analysis-proc" class="flex-1 py-3 text-center text-xs font-bold border-r border-slate-200 text-slate-500 hover:bg-slate-100">
+                        ⏳ 程序违法剖析
+                    </button>
+                </div>
+
+                <!-- 实体违法剖析面板 -->
+                <div id="panel-analysis-ent" class="p-4 flex-grow overflow-y-auto no-scrollbar space-y-4 text-xs">
+                    <!-- Section A: 38条滥用 -->
+                    <div>
+                        <div class="flex justify-between items-center border-b border-slate-100 pb-1.5 mb-1.5">
+                            <span class="font-bold text-slate-900 text-xs flex items-center gap-1">
+                                <span class="w-1.5 h-3 bg-blue-600 rounded"></span>《条例》38条"加工分析"滥用
+                            </span>
+                            <span class="text-rose-600 font-bold font-mono">22.4% (22件)</span>
+                        </div>
+                        <p class="leading-relaxed text-slate-500 mb-1.5">
+                            行政机关无义务作深度研究，但日常统计数据不属于加工分析。
+                        </p>
+                        <!-- 最高院裁判规则 -->
+                        <div class="bg-blue-50/50 border border-blue-100 p-2 rounded text-blue-800 leading-normal mb-2 text-[10px]">
+                            <b>💡 市场监督管理投诉信息公示暂行规则：</b>第二十条 地方市场监管部门应当加强对本行政区域投诉信息的统计、分析、应用，定期公布投诉信息统计分析报告
+                        </div>
+
+                        <!-- 典型违法表现表格化呈现 -->
+                        <div class="border border-slate-100 rounded overflow-hidden">
+                            <table class="w-full text-[10px]">
+                                <tbody class="divide-y divide-slate-100 text-slate-700">
+                                    <tr>
+                                        <td class="p-1 font-bold">无理由型滥用</td>
+                                        <td class="p-1 text-right">
+                                            <span onclick="openAndSearchCase(3)" class="cursor-pointer text-blue-600 hover:underline font-bold bg-blue-50 px-1 py-0.5 rounded">李志发案 (NO.003)</span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="p-1 font-bold">自相矛盾型滥用</td>
+                                        <td class="p-1 text-right">
+                                            <span onclick="openAndSearchCase(6)" class="cursor-pointer text-blue-600 hover:underline font-bold bg-blue-50 px-1 py-0.5 rounded">喻冠林案 (NO.006)</span>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Section B: 概念混淆 -->
+                    <div>
+                        <div class="flex justify-between items-center border-b border-slate-100 pb-1.5 mb-1.5 mt-2">
+                            <span class="font-bold text-slate-900 text-xs flex items-center gap-1">
+                                <span class="w-1.5 h-3 bg-amber-600 rounded"></span>"案件" 与 "投诉举报" 概念混淆
+                            </span>
+                            <span class="text-amber-600 font-bold font-mono">12.2% (12件)</span>
+                        </div>
+                        <!-- 可视化漏斗组件 -->
+                        <div class="bg-amber-50/40 border border-amber-100 rounded p-2 space-y-1">
+                            <div class="space-y-1">
+                                <div class="flex items-center gap-2">
+                                    <div class="w-16 text-[9px] text-slate-500 text-right">投诉件 (线索)</div>
+                                    <div class="flex-grow bg-amber-200 h-2 rounded font-mono text-[8px] flex items-center pl-2 font-bold" style="width: 100%">100% 原始输入</div>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <div class="w-16 text-[9px] text-slate-500 text-right">行政处罚案</div>
+                                    <div class="bg-emerald-400 h-2 rounded font-mono text-[8px] text-white flex items-center pl-2 font-bold" style="width: 25%">10%-30% 立案结果</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex gap-2 mt-2">
+                            <span onclick="openAndSearchCase(22)" class="flex-1 cursor-pointer text-center text-blue-600 hover:underline font-bold bg-blue-50 py-1 rounded border border-blue-100 text-[10px]">颜照杰案 (NO.022)</span>
+                            <span onclick="openAndSearchCase(57)" class="flex-1 cursor-pointer text-center text-blue-600 hover:underline font-bold bg-blue-50 py-1 rounded border border-blue-100 text-[10px]">王晶晶案 (NO.057)</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 程序违法剖析面板 -->
+                <div id="panel-analysis-proc" class="p-4 flex-grow overflow-y-auto no-scrollbar space-y-4 text-xs bg-stone-50/10 hidden">
+                    <!-- Section A: 严重行政不作为 -->
+                    <div>
+                        <div class="flex justify-between items-center border-b border-slate-100 pb-1.5 mb-1.5">
+                            <span class="font-bold text-slate-900 text-xs flex items-center gap-1">
+                                <span class="w-1.5 h-3 bg-red-600 rounded"></span>行政不作为 (超时、未有效送达)
+                            </span>
+                            <span class="text-red-600 font-bold font-mono">30.6% (30件)</span>
+                        </div>
+                        <p class="leading-relaxed text-slate-500 mb-2">
+                            《条例》规定20工作日内须书面送达，过期、坏链接、系统办结却不给书面均等同于违法不作为。
+                        </p>
+                        <!-- 典型案件点击 -->
+                        <div class="grid grid-cols-3 gap-1.5">
+                            <span onclick="openAndSearchCase(11)" class="cursor-pointer text-center text-blue-600 hover:underline font-bold bg-blue-50 p-1.5 rounded border border-blue-100 text-[10px]">李宏伟 (11)</span>
+                            <span onclick="openAndSearchCase(30)" class="cursor-pointer text-center text-blue-600 hover:underline font-bold bg-blue-50 p-1.5 rounded border border-blue-100 text-[10px]">刘星驰 (30)</span>
+                            <span onclick="openAndSearchCase(78)" class="cursor-pointer text-center text-blue-600 hover:underline font-bold bg-blue-50 p-1.5 rounded border border-blue-100 text-[10px]">雷雅珺 (78)</span>
+                        </div>
+                    </div>
+
+                    <!-- Section B: 形式及瑕疵 -->
+                    <div>
+                        <div class="flex justify-between items-center border-b border-slate-100 pb-1.5 mb-1.5 mt-2">
+                            <span class="font-bold text-slate-900 text-xs flex items-center gap-1">
+                                <span class="w-1.5 h-3 bg-pink-600 rounded"></span>形式违法、不当补正与胁迫撤回
+                            </span>
+                            <span class="text-pink-600 font-bold font-mono">9.2% (9件)</span>
+                        </div>
+                        <ul class="space-y-1.5 text-slate-500 text-[10px]">
+                            <li class="flex items-start gap-1">
+                                <span>•</span>
+                                <span><b>口头答复违法：</b>违背第四十条要式原则。如老河口市监局（张瑾润案）</span>
+                            </li>
+                            <li class="flex items-start gap-1">
+                                <span>•</span>
+                                <span><b>复函形式无效：</b>鄂城区沈淼案、梁子湖陈浪案，政府答复均<b>无盖公章</b>。</span>
+                            </li>
+                            <li class="flex items-start gap-1">
+                                <span>•</span>
+                                <span><b>胁迫放弃知情：</b>江陵局李智超案强制填《撤回声明书》才肯公开。</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 卡片二：原始案卷检索与抽屉 (高度 396px) -->
+            <div class="bg-white p-5 rounded-xl shadow-md border border-slate-200 flex flex-col justify-between h-[396px]">
+                <h2 class="text-xs font-bold text-slate-800 flex items-center justify-between border-b border-slate-100 pb-2 shrink-0">
+                    <span><i class="fa-solid fa-cabinet-filing text-slate-700 mr-1.5"></i>原始案卷检索抽屉</span>
+                    <span id="case-count" class="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full font-medium">共 98 件</span>
+                </h2>
+
+                <!-- 搜索与多维过滤条 -->
+                <div class="space-y-2 mt-2 shrink-0">
+                    <div class="relative">
+                        <input type="text" id="searchInput" oninput="filterCases()" placeholder="输入姓名/答复机关/关键字..." class="w-full pl-8 pr-4 py-1.5 text-[11px] border border-slate-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500" value="">
+                        <svg class="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-2">
+                        <select id="cityFilter" onchange="filterCases()" class="text-[11px] border border-slate-300 rounded p-1 bg-slate-50 focus:outline-none">
+                            <option value="" selected="selected">-- 选择地市 --</option>
+                            <option value="武汉市">武汉市 (15)</option>
+                            <option value="襄阳市">襄阳市 (20)</option>
+                            <option value="宜昌市">宜昌市 (11)</option>
+                            <option value="荆州市">荆州市 (8)</option>
+                            <option value="黄冈市">黄冈市 (8)</option>
+                            <option value="十堰市">十堰市 (6)</option>
+                            <option value="恩施州">恩施州 (7)</option>
+                            <option value="孝感市">孝感市 (4)</option>
+                            <option value="荆门市">荆门市 (4)</option>
+                            <option value="随州市">随州市 (3)</option>
+                            <option value="咸宁市">咸宁市 (3)</option>
+                            <option value="鄂州市">鄂州市 (3)</option>
+                            <option value="黄石市">黄石市 (1)</option>
+                            <option value="省直辖">省直辖 (5)</option>
+                        </select>
+                        <select id="legalFilter" onchange="filterCases()" class="text-[11px] border border-slate-300 rounded p-1 bg-slate-50 focus:outline-none">
+                            <option value="" selected="selected">-- 行政合法性 --</option>
+                            <option value="合规">合法/基本合规</option>
+                            <option value="不当/瑕疵">程序/事实瑕疵</option>
+                            <option value="违法/不作为">违法/行政不作为</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- 案卷列表 -->
+                <div id="casesList" class="flex-grow overflow-y-auto space-y-2 mt-2.5 pr-1 no-scrollbar h-[200px]">
+                    <!-- JS will render cases here -->
+                </div>
+            </div>
+
+        </section>
+
+    </main>
+
+    <!-- 侧边滑出式高保真案卷抽屉 (Case Dossier Sheet) -->
+    <div id="dossierDrawer" class="fixed right-0 top-0 h-full w-full max-w-lg bg-white shadow-2xl z-50 transform transition-transform duration-300 ease-in-out border-l border-slate-200 flex flex-col translate-x-full">
+        <!-- 抽屉头部 -->
+        <div class="bg-slate-950 text-white p-5 flex justify-between items-center shrink-0">
+            <div>
+                <span class="text-xs text-red-500 font-bold tracking-wider font-mono">CONFIDENTIAL / AUDIT</span>
+                <h3 class="text-md font-bold" id="drawer-case-id">审计档案号：HB-CASE-2026-034</h3>
+            </div>
+            <button onclick="closeDrawer()" class="p-2 hover:bg-slate-800 rounded transition text-slate-400 hover:text-white">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+        </div>
+
+        <!-- 案卷袋真实封面效果 -->
+        <div class="flex-grow overflow-y-auto p-6 space-y-6 bg-amber-50/10 no-scrollbar">
+            <div class="border-4 border-double border-amber-900/40 p-4 rounded bg-white shadow-sm relative font-gongwen">
+                <div class="text-center text-xs text-amber-900/60 font-bold tracking-widest mb-2">中华人民共和国政府信息公开监督审查</div>
+                <div class="text-center text-xl font-bold text-amber-900 tracking-wider border-b-2 border-amber-900/30 pb-3 mb-4">
+                    行 政 法 审 计 案 卷
+                </div>
+
+                <div class="grid grid-cols-3 gap-3 text-xs text-amber-900/80 mb-6">
+                    <div class="col-span-3 border-b border-dashed border-amber-900/20 pb-1 flex justify-between">
+                        <span>● 申请主体:</span> <span class="font-bold text-slate-800" id="drawer-applicant">陈玥如</span>
+                    </div>
+                    <div class="col-span-3 border-b border-dashed border-amber-900/20 pb-1 flex justify-between">
+                        <span>● 被申请机关:</span> <span class="font-bold text-slate-800" id="drawer-target">老河口市市场监督管理局</span>
+                    </div>
+                    <div class="col-span-2 border-b border-dashed border-amber-900/20 pb-1">
+                        <span>● 所属地市:</span> <span class="font-bold text-slate-800 ml-1" id="drawer-city">襄阳市</span>
+                    </div>
+                    <div class="border-b border-dashed border-amber-900/20 pb-1">
+                        <span>● 合规级别:</span> <span class="font-bold ml-1 px-2.5 py-0.5 rounded text-[11px] border bg-red-50 text-red-700 border-red-200" id="drawer-legal-badge">违法/不作为</span>
+                    </div>
+                </div>
+
+                <div class="border border-amber-900/20 rounded p-3 bg-amber-50/30 text-xs leading-relaxed text-amber-950">
+                    <span class="font-bold text-amber-900 block mb-1">🔍 原始申请事实要点：</span>
+                    <p id="drawer-original-fact" class="text-slate-700">申请公开消费者案件数。工作人员致电询问申请动机，以申请“范围过大”为由要求撤销申请，无书面答复。</p>
+                </div>
+            </div>
+
+            <!-- 行政法四要件审计剖析 -->
+            <div class="space-y-4">
+                <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider">⚖️ 四要件行政法审计结论</h4>
+                
+                <div class="bg-white border border-slate-200 rounded-lg p-3 shadow-sm">
+                    <span class="text-xs font-bold text-slate-900 flex items-center gap-1.5">
+                        <span class="w-2 h-2 rounded-full bg-blue-500"></span> 1. 答复行为定性 (行政法属性)
+                    </span>
+                    <p class="text-xs text-slate-600 mt-1 pl-3.5" id="drawer-type-eval"><b>回复性质：</b>口头规避（程序及动机审查违法）</p>
+                </div>
+
+                <div class="bg-white border border-slate-200 rounded-lg p-3 shadow-sm">
+                    <span class="text-xs font-bold text-slate-900 flex items-center gap-1.5">
+                        <span class="w-2 h-2 rounded-full bg-amber-500"></span> 2. 法律适用评析 (援引合规度)
+                    </span>
+                    <p class="text-xs text-slate-600 mt-1 pl-3.5" id="drawer-law-eval"><b>法条评估：</b>根据《条例》规定，申请公开不审查目的动机。“范围过大”属于非法定理由，如果确实属于条例第30条规定的不明确，应当出具书面的“补正告知书一次性释明，而非电话威逼利诱撤回。 (依据条文：无)</p>
+                </div>
+
+                <div class="bg-white border border-slate-200 rounded-lg p-3 shadow-sm">
+                    <span class="text-xs font-bold text-slate-900 flex items-center gap-1.5">
+                        <span class="w-2 h-2 rounded-full bg-indigo-500"></span> 3. 程序合规判断 (时效/送达)
+                    </span>
+                    <p class="text-xs text-slate-600 mt-1 pl-3.5" id="drawer-proc-eval"><b>程序时限：</b>程序严重失范。涉嫌给申请人非法施压撤回申请。 (申请：2026-04-22 / 答复：口头答复)</p>
+                </div>
+
+                <div class="bg-white border border-slate-200 rounded-lg p-3 shadow-sm">
+                    <span class="text-xs font-bold text-slate-900 flex items-center gap-1.5">
+                        <span class="w-2 h-2 rounded-full bg-rose-500"></span> 4. 违法/瑕疵识别及追责
+                    </span>
+                    <p class="text-xs text-slate-600 mt-1 pl-3.5" id="drawer-risk-tip"><b>法治督查违法/瑕疵点：</b><span class="text-rose-600 font-semibold">以非法定借口电话要挟申请人放弃依申请公开权利，构成滥用职权程序违法。</span></p>
+                </div>
+            </div>
+
+            <!-- 权利救济与纠错指引 -->
+            <div class="border border-slate-200 rounded-lg bg-slate-50 p-4 text-xs space-y-2">
+                <span class="font-bold text-slate-800 block">📢 申请人法定救济指引</span>
+                <p class="text-slate-600" id="drawer-relief"><b>法定知情权利告知指引：</b>向上级纪检或法制办投诉，同时可申请复议确认口头要挟程序违法。</p>
+                <div class="bg-blue-50 border border-blue-200 p-2.5 rounded text-[11px] text-blue-700 leading-normal">
+                    <b>纠错对策：</b> 如拒绝理由不合法，应于收到本答复书之日起<b>60日内</b>依法向上级监管单位提请行政复议；或在<b>6个月内</b>提起行政诉讼。
+                </div>
+            </div>
+        </div>
+
+        <!-- 抽屉底部 -->
+        <div class="p-4 bg-slate-50 border-t border-slate-200 flex gap-2 shrink-0">
+            <button onclick="copyDossierToClipboard()" class="flex-1 py-2 bg-slate-800 hover:bg-slate-700 text-white text-xs font-bold rounded transition">
+                📋 复制本卷宗判定内容
+            </button>
+            <button onclick="closeDrawer()" class="px-4 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 text-xs font-bold rounded transition">
+                关闭
+            </button>
+        </div>
+    </div>
+
+    <!-- 抽屉背景遮罩 -->
+    <div id="drawerOverlay" onclick="closeDrawer()" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-40 transition-opacity duration-300 hidden"></div>
+
+    <!-- 页脚 -->
+    <footer class="bg-slate-900 text-slate-500 text-xs py-4 border-t border-slate-800 text-center shrink-0">
+        <div class="max-w-[1600px] mx-auto px-4">
+            <p>© 2026 湖北文理学院理工学院经济管理学院法学2532班3组行政法小组作业</p>
+        </div>
+    </footer>
+
+    <!-- JS核心逻辑 -->
+    <script>
+        // 全量98起消费者权益依申请公开行政法逐案数据库
+        const rawCasesDatabase = [
+            // 武汉市 (1-15)
+            { id: 1, applicant: "马鸣辰", target: "武汉市江夏区市场监督管理局", city: "武汉市", date: "2026-04-22", reply_date: "2026-05-11", type: "指引查询", code: "条例第36条第(一)项", is_legal: "不当/瑕疵", desc: "申请公开消费者权益案件数量。该局回复指引网址自行查阅。", type_eval: "指引查询（属于行政指导行为）", law_eval: "援引《条例》第三十六条第（一）项并告知查阅网址。但指引的年报链接是否包含“消费者权益案件数量”专项统计存疑，若仅为笼统数据，则构成指引不当。", proc_eval: "4月22日申请，5月11日答复，期限内完成。合规。", risk_tip: "需核实指引内容是否切合申请，否则可能构成变相拒绝、事实不清。", relief: "60日内向江夏区人民政府申请行政复议，或6个月内向江夏区人民法院提起行政诉讼。", note: "指引至http://www.jiangxia.gov.cn/xxgk_2234 自行查询。" },
+            { id: 2, applicant: "李政锐", target: "武汉市市场监督管理局", city: "武汉市", date: "2026-04-27", reply_date: "2026-05-19", type: "告知不掌握", code: "条例第10条、第36条第(五)项", is_legal: "不当/瑕疵", desc: "申请公开江岸区市场监督管理局办理 of 消费者权益案件数量，市局告知不掌握，建议向江岸区局申请。", type_eval: "告知不掌握（行政告知行为）", law_eval: "援引《条例》第十条、第三十六条第（五）项，法律适用基本准确。市局并非该信息的制作机关。", proc_eval: "4月27日申请，5月19日答复，于法定期限内完成。", risk_tip: "作为上级监督机关，未直接转办而是让申请人重新提起，程序虽然合法，但存在便民性瑕疵。", relief: "60日内向武汉市人民政府申请行政复议，或6个月内向武汉市江汉区人民法院提起行政诉讼。", note: "建议向江岸区市场监督管理局申请（地址：京汉大道950号）。" },
+            { id: 3, applicant: "李志发", target: "武汉市东西湖区市场监督管理局", city: "武汉市", date: "2026-04-22", reply_date: "2026-05-06", type: "不予提供", code: "条例第38条、第36条第(三)项", is_legal: "违法/不作为", desc: "申请公开消费者权益案件数量。该局以需要分析为由拒绝提供。", type_eval: "不予提供（行政拒绝行为）", law_eval: "滥用《条例》第三十八条“加工分析”豁免条款。案卷数量为执法基本统计项，无需重新加工分析，拒绝依据不成立。", proc_eval: "期限内答复，程序形式完整。", risk_tip: "法律适用错误，把基础执法统计当成复杂分析论证，剥夺知情权，构成实体违法，面临复议诉讼高败诉风险。", relief: "60日内向东西湖区人民政府申请行政复议，或提起诉讼。", note: "以'需要分析'为由拒绝不予公开。" },
+            { id: 4, applicant: "冯志强", target: "武汉市洪山区市场监督管理局", city: "武汉市", date: "2026-04-23", reply_date: "2026-05-06", type: "不予提供", code: "条例第38条", is_legal: "违法/不作为", desc: "申请公开2025年销售商品数量不足侵害消费者权益案件统计信息，被指需加工分析。", type_eval: "不予提供（行政拒绝行为）", law_eval: "严重滥用《条例》第三十八条。统计信息是客观事实，不属于加工分析范畴。", proc_eval: "要求补正申请内容（销售商品数量不足这一类型），后在期限内答复。", risk_tip: "法律适用错误。若申请人原申请已明确，启动补正属于不合理地苛加程序门槛，有程序违法之嫌。", relief: "60日内向洪山区人民政府申请行政复议。", note: "5月6日收到补正后仍作不予提供处理。" },
+            { id: 5, applicant: "吴世隆", target: "武汉市江汉区市场监督管理局", city: "武汉市", date: "2026-04-23", reply_date: "2026-05-13", type: "不予提供", code: "条例第38条", is_legal: "违法/不作为", desc: "申请公开消费者权益案件数量。以需加工分析为由不予提供。", type_eval: "不予提供（行政拒绝行为）", law_eval: "典型滥用《条例》第三十八条，法律适用存在重大错误。", proc_eval: "20个工作日内作出书面复函，程序时间合格。", risk_tip: "剥夺公众对消保行政处罚案件基础数量的知情权，法理基础不扎实，属于高风险纠纷件。", relief: "60日内向江汉区人民政府申请复议或向法院提起诉讼。", note: "典型滥用第38条拒绝公开件." },
+            { id: 6, applicant: "喻冠林", target: "武汉市青山区市场监督管理局", city: "武汉市", date: "2026-04-23", reply_date: "2026-05-19", type: "不予提供+指引查询", code: "条例第38条", is_legal: "违法/不作为", desc: "申请公开2025年度消费者权益案件数量。该局以需加工分析不予提供，同时却指引查看行政执法年报。", type_eval: "部分拒绝+行政指导", law_eval: "逻辑前后自相矛盾。若通过查看年报可以直接获知，则证明该数据不需要重新加工，其“加工分析”的拒绝理由自动不成立。", proc_eval: "20个工作日内完成答复。", risk_tip: "实体处理自相矛盾，既认为“不存在（需加工）”，又提供“指引（存在）”，行政行为无法自圆其说。", relief: "60日内向青山区人民政府申请复议。", note: "指引查看2025年青山区行政执法统计年报。" },
+            { id: 7, applicant: "汤立昊", target: "武汉经济技术开发区（汉南区）市场监督管理局", city: "武汉市", date: "2026-04-22", reply_date: "2026-05-06", type: "不予提供", code: "条例第36条第(五)项", is_legal: "违法/不作为", desc: "申请公开案件数量，答复书援引“信息不掌握”，但备注理由却写“需要重新统计加工分析”。", type_eval: "行政拒绝", law_eval: "法条援引与备注理由严重割裂自相矛盾。不掌握说明信息不存在，加工分析说明信息存在归并，法律适用混乱。", proc_eval: "期限内完成，文本限制突出。", risk_tip: "法条依据和书面理由自相矛盾，是极其严重的法律适用低级错误，属于可轻易被纠错的违法行政件。", relief: "60日内向武汉市人民政府申请复议。", note: "法条援引和备注内容完全割裂。" },
+            { id: 8, applicant: "左嘉颖", target: "武汉市武昌区市场监督管理局", city: "武汉市", date: "2026-04-23", reply_date: "2026-04-30", type: "部分公开", code: "条例第36条第(二)项、第38条", is_legal: "合规", desc: "申请公开2025年度案件数及分类。武昌局公开总数，拒绝了详细分类数据。", type_eval: "部分公开（合规行政行为）", law_eval: "公开案件总数（1161件）援引第（二）项，对需要额外统计的分类数据以第38条处理，区分处理基本恰当。", proc_eval: "答复极为高效。4月23日申请，4月30日答复。", risk_tip: "分类数据是否确需“加工分析”仍有争议，但已属全清单中质量极高的标杆答复。", relief: "60日内向武昌区人民政府申请复议。", note: "公开核心数据：2025年查办案件1161件。全省较好范例。" },
+            { id: 9, applicant: "朱佳杰", target: "武汉市汉阳区市场监督管理局", city: "武汉市", date: "2026-04-22", reply_date: "2026-05-06", type: "不予提供", code: "条例第38条", is_legal: "违法/不作为", desc: "申请公开案件数量，该局合并其三份相同申请，以需加工分析拒绝公开。", type_eval: "行政拒绝", law_eval: "典型适用第38条错误。案件总数非加工分析项。", proc_eval: "合并三份申请统一处理，流程集约，但实体处理错误。", risk_tip: "拒绝公开依据不足。合并处理未免除其法定公开的实体责任。", relief: "60日内向汉阳区人民政府申请复议。", note: "合并处理提高了内部效率，但拒绝理由违法。" },
+            { id: 10, applicant: "顾诗红", target: "武汉市硚口区市场监督管理局", city: "武汉市", date: "2026-04-23", reply_date: "2026-05-12", type: "不予公开", code: "条例第38条", is_legal: "违法/不作为", desc: "申请2025至2026年3月底消费者权益案件数。该局以需人工分类筛选统计为由不予公开。", type_eval: "行政拒绝", law_eval: "错误理解“加工分析”。人工分类筛选属于行政机关数据整理的内部工作范畴，不能视为条例第38条的豁免理由。且文书表述为“不予公开”，援引的却是“不予提供”条款，用语不规范。", proc_eval: "时限内书面回复。", risk_tip: "混淆工作成本与豁免公开的界限，构成实体违法。", relief: "60日内向硚口区人民政府申请复议。", note: "人工筛选统计不是加工分析。" },
+            { id: 11, applicant: "李宏伟", target: "武汉市江夏区市场监督管理局", city: "武汉市", date: "2026-04-22", reply_date: "未答复", type: "未答复", code: "无", is_legal: "违法/不作为", desc: "申请公开消费者权益案件数量。截至2026年5月23日，系统显示已受理但未作任何书面答复。", type_eval: "行政不作为（逾期不作为）", law_eval: "无任何法律依据。违反了《条例》规定的答复义务。", proc_eval: "已超出法定的20个工作日答复时限，且未发出延期告知。", risk_tip: "构成典型的逾期不作为，在复议或诉讼中处于绝对违法状态。", relief: "可向上级人民政府提起行政复议或向江夏区法院提起不作为诉讼。", note: "系统显示已受理（查询密码975828），但未作答复。" },
+            { id: 12, applicant: "匿名", target: "武汉市蔡甸区市场监督管理局", city: "武汉市", date: "2026-05-09", reply_date: "未答复", type: "未答复", code: "无", is_legal: "违法/不作为", desc: "申请公开案件数量。截至5月22日未收到回复。", type_eval: "行政不作为", law_eval: "违反依申请公开的法定职责。", proc_eval: "处于逾期状态或极高风险期。", risk_tip: "到期仍未书面送达属于程序违法。", relief: "提起行政复议或行政诉讼。", note: "截至5月23日系统仍无反馈记录。" },
+            { id: 13, applicant: "王玉芳", target: "武汉市新洲区市场监督管理局", city: "武汉市", date: "2026-04-22", reply_date: "未答复", type: "未答复", code: "无", is_legal: "违法/不作为", desc: "申请公开案件数量。系统有受理编码，但截至5月23日仍未给予任何回复。", type_eval: "行政不作为", law_eval: "不依法履行职责。", proc_eval: "严重逾期，属于典型消极不作为。", risk_tip: "在起诉或被复议时，属于无抗辩理由的违法件。", relief: "提起行政不作为确认违法诉讼。", note: "申请单号：2026042252516416。" },
+            { id: 14, applicant: "匿名", target: "武汉市汉阳区市场监督管理局", city: "武汉市", date: "2026-05-08", reply_date: "口头答复", type: "口头答复", code: "条例第40条", is_legal: "违法/不作为", desc: "申请公开消费者权益案件数量。该局工作人员仅通过电话口头答复，拒绝出具书面盖章文书。", type_eval: "口头答复（程序违法行为）", law_eval: "严重违反《条例》第四十条“政府信息公开申请应当书面答复”的刚性程序规定。", proc_eval: "未向申请人送达任何书面决定书，程序违法。", risk_tip: "口头回复不具有正式答复行政行为的效力，等同于未履行书面公开答复职责，在法律上可直接被裁定不作为或撤销程序。", relief: "向上级行政机关投诉或以程序严重违法申请复议。", note: "仅电话回复，未提供任何书面材料。" },
+            { id: 15, applicant: "窦贤杰", target: "武汉市黄陂区司法局", city: "武汉市", date: "2026-04-29", reply_date: "补正中", type: "补正告知", code: "条例第30条", is_legal: "不当/瑕疵", desc: "申请公开法律职业资格大纲。因非消费者权益主题，本审计不纳入消费专题分析，但该局要求补正身份证正反面照片，目前处于补正阶段。", type_eval: "补正告知（程序性行为）", law_eval: "援引《条例》第三十条，程序相对合法。", proc_eval: "补正阶段未届满，目前仍在进行中。", risk_tip: "本案非涉消案件，暂无实体违法风险，但可作形式参考。", relief: "如对补正要求不服可在法定期限内依法向黄陂区人民政府申请复议。", note: "非消费者权益主题申请。" },
+
+            // 襄阳市 (16-35)
+            { id: 16, applicant: "叶雨杰", target: "宜城市市场监督管理局", city: "襄阳市", date: "2026-04-22", reply_date: "2026-05-08", type: "直接公开", code: "条例第36条第(二)项", is_legal: "合规", desc: "申请公开消费者权益案件数量。宜城局直接公开：2025年办理保护消费者权益案件32件；2026年截止目前立案15件，均未结案。", type_eval: "直接公开（合规典型）", law_eval: "准确援引《条例》第三十六条第（二）项，信息清晰，事实认定准确。", proc_eval: "时限内书面公文送达，审批单齐全，附有主管领导“同意”签批，程序极其规范。", risk_tip: "无实体违法点，属于全省正面典型个案。唯一不足是领导签批属于机关内部控制，不影响外部合法性。", relief: "60日内向宜城市人民政府申请行政复议。", note: "全省模范件之一。附领导内部批示单." },
+            { id: 17, applicant: "王安易", target: "襄阳市襄州区市场监督管理局", city: "襄阳市", date: "2026-04-24", reply_date: "2026-05-06", type: "不予提供", code: "条例第38条", is_legal: "违法/不作为", desc: "申请案件数量，该局以“需加工分析”为由拒绝提供。", type_eval: "行政拒绝", law_eval: "滥用《条例》第三十八条，适用法律错误。", proc_eval: "20工作日内答复，程序形式完整。", risk_tip: "实体违法，统计基础数量不属于重新论证或重塑事实的“加工分析”，构成阻挠依申请公开。", relief: "60日内向襄州区人民政府申请行政复议。", note: "滥用第38条拒绝。" },
+            { id: 18, applicant: "李光煜", target: "襄阳市樊城区市场监督管理局", city: "襄阳市", date: "2026-04-23", reply_date: "未答复", type: "未答复", code: "无", is_legal: "违法/不作为", desc: "申请2025年度案件及投诉举报数据，截至5月23日系统状态仍为“待办”状态，未收到任何答复。", type_eval: "行政不作为", law_eval: "违反条例第三十三条法定答复期规定，属于消极退避。", proc_eval: "明显逾期，无任何延期和中止程序说明。", risk_tip: "不作为直接构成司法诉求，极易面临复议纠错或败诉。", relief: "向樊城区人民政府申请行政复议，确认不作為违法。", note: "系统状态为待办，受理号：2026042311390281。" },
+            { id: 19, applicant: "何小烨", target: "保康县市场监督管理局", city: "襄阳市", date: "2026-04-22", reply_date: "2026-04-28", type: "指引查询", code: "条例第36条第(一)项", is_legal: "不当/瑕疵", desc: "申请公开2025年度案件数量。指引至网站查询2025年度行政处罚案件总量表。", type_eval: "指引查询（行政指导）", law_eval: "援引第三十六条第（一）项指引合法，但需核查所指引的处罚汇总表是否能单独区分“消费者权益”专项案卷，否则构成指引不当。", proc_eval: "4月22日提出，4月28日迅速答复，程序极其迅速。", risk_tip: "如若年报内不含有专项，涉嫌以笼统指引变相规避直接公开义务。", relief: "60日内向保康县人民政府申请行政复议。", note: "指引查阅2025年度行政处罚总表。" },
+            { id: 20, applicant: "许康毅", target: "襄阳高新技术产业开发区管委会", city: "襄阳市", date: "2026-04-23", reply_date: "2026-05-11", type: "不予提供", code: "条例第38条", is_legal: "违法/不作为", desc: "申请高新区市监局办理的案件。该管委会以“需要分析”为由予以拒绝。", type_eval: "行政拒绝", law_eval: "适用法律错误。管委会并非直接制作机关，如果其确实不掌握，本应援引《条例》第三十六条第（五）项作为“不掌握”转办或指引，而不是替下级机关以“加工分析（第38条）”为由直接拒绝。", proc_eval: "时间合规，但实体判定依据错位。", risk_tip: "主体地位与法条判定错配，构成重大行政行为依据不当瑕疵，极易被复议撤销。", relief: "60日内向襄阳市人民政府申请复议。", note: "非直属机关却以第38条替下属局拒绝。" },
+            { id: 21, applicant: "李莫然", target: "南漳县市场监督管理局", city: "襄阳市", date: "2026-04-23", reply_date: "2026-05-20", type: "不予提供", code: "条例第38条", is_legal: "违法/不作为", desc: "申请公开消费者权益案件数量，被以“需要重新统计分析”为由拒绝公开。", type_eval: "行政拒绝", law_eval: "滥用第38条。不愿统计基础工作量不等于法定的“需要分析研究”。", proc_eval: "拖延至5月20日答复，卡点过关。", risk_tip: "拒绝理由属于典型规避，在行政法庭中被认定非加工分析的可能性为99%，实体违法。", relief: "60日内向南漳县人民政府申请行政复议。", note: "以人工重新统计不予公开属违法规避。" },
+            { id: 22, applicant: "颜照杰", target: "鱼梁洲经济开发区市场监管局", city: "襄阳市", date: "2026-04-22", reply_date: "2026-05-02", type: "直接公开", code: "条例第36条第(二)项", is_legal: "不当/瑕疵", desc: "申请案件数量。该局直接公开：2025年共受理投诉84件（12345共63件、12315共21件）均已办结。", type_eval: "直接公开（混淆行为）", law_eval: "虽然积极公开并援引《条例》第三十六条第（二）项，但存在严重的“案件-投诉”概念混淆。申请人要的是“处罚案件数量”，该局提供的是“投诉举报案件（实为民事纠纷调解登记）”。", proc_eval: "期限内答复，流程完整。", risk_tip: "答复口径不符合申请目的。未区分“诉转案”或行政执法案件，事实认定不够精准。", relief: "60日内向襄阳市人民政府申请行政复议。", note: "概念混淆。把投诉受理量当成了消保行政处罚案件数。" },
+            { id: 23, applicant: "董科妍", target: "襄阳东津新区（经开区）管委会", city: "襄阳市", date: "2026-04-22", reply_date: "2026-05-14", type: "指引查询+告知管辖", code: "条例第36条第(一)项", is_legal: "不当/瑕疵", desc: "申请公开案件。投诉指引至12315，处罚案告知处罚权限由市局负责，建议向市局申请。", type_eval: "告知不掌握与指引", law_eval: "概念混淆，且分割处理。管委会若确实不承担处罚职能，应直接说明并援引第36条第（五）项转办。把投诉与案件混为一谈处理。", proc_eval: "时限内回复，流程合规。", risk_tip: "答复中将投诉与案件相分离，未能直接回答本级是否掌握统计数据，属于答复履职不完全。", relief: "60日内向襄阳市人民政府申请行政复议。", note: "割裂投诉和行政处罚，建议向市局提出。" },
+            { id: 24, applicant: "魏新凯", target: "襄阳市樊城区人民政府", city: "襄阳市", date: "2026-04-23", reply_date: "未答复", type: "未答复", code: "无", is_legal: "违法/不作为", desc: "申请公开樊城区市监局2025年消费者举报投诉数量及处罚案件数量。系统长期处于待办，未予回复。", type_eval: "行政不作为", law_eval: "不依法履行依申请公开职责。", proc_eval: "严重逾期违法。", risk_tip: "区政府作为被申请主体未在限期内作出书面处理，不作为违法确凿。", relief: "可依法向襄阳市人民政府申请行政复议监督纠正。", note: "系统状态为待办，受理号：2026042331113889。" },
+            { id: 25, applicant: "匿名", target: "襄阳市襄城区市场监督管理局", city: "襄阳市", date: "2026-05-01", reply_date: "未答复", type: "未答复", code: "无", is_legal: "违法/不作为", desc: "申请公开2025年投诉和举报的案件总数并要求明确区分。至5月23日系统未给予任何回复。", type_eval: "行政不作为", law_eval: "不作为程序违法。", proc_eval: "逾期不答复。", risk_tip: "行政机关无任何正当抗辩，程序失职。", relief: "向襄城区人民政府申请行政复议。", note: "到期无回复记录。" },
+            { id: 26, applicant: "匿名", target: "襄阳市襄州区市场监督管理局", city: "襄阳市", date: "2026-05-05", reply_date: "未答复", type: "未答复", code: "无", is_legal: "违法/不作为", desc: "申请2025年度投诉举报总量。至5月20日无答复，截至5月23日确认不作为状态。", type_eval: "行政不作为", law_eval: "不作为程序违法。", proc_eval: "逾期违法。", risk_tip: "完全漠视行政时限，典型程序违法行为。", relief: "向襄州区人民政府提起行政复议。", note: "逾期不作为典型。" },
+            { id: 27, applicant: "李文星", target: "襄阳东津新区市场监管局", city: "襄阳市", date: "2026-04-23", reply_date: "未答复", type: "未答复", code: "无", is_legal: "违法/不作为", desc: "申请公开案件数量。截至5月23日无任何书面结果。", type_eval: "行政不作为", law_eval: "逾期程序违法。", proc_eval: "无任何延期行为，属程序缺失。", risk_tip: "违法不作为行为。", relief: "向襄阳市人民政府申请行政复议。", note: "系统待办单号：2026042337655029。" },
+            { id: 28, applicant: "冷从天使", target: "谷城县市场监督管理局", city: "襄阳市", date: "2026-04-22", reply_date: "未答复", type: "未答复", code: "无", is_legal: "违法/不作为", desc: "申请公开消费者权益案件数量。长期显示待办，未予理睬。", type_eval: "行政不作为", law_eval: "不依条例时限答复，程序违法。", proc_eval: "逾期不作为。", risk_tip: "存在严重程序阻却风险，不履行法治职能。", relief: "向谷城县人民政府提出复议申请。", note: "长期在系统中处于挂账待办。" },
+            { id: 29, applicant: "匿名", target: "襄阳市樊城区市场监督管理局", city: "襄阳市", date: "2026-05-03", reply_date: "未答复", type: "未答复", code: "无", is_legal: "违法/不作为", desc: "申请公开2025年度投诉举报量。截至5月23日已超出法定期限未收到回复。", type_eval: "行政不作为", law_eval: "违反时限要求，程序违法。", proc_eval: "20个工作日到期直接不作为。", risk_tip: "属于可被司法确认违法的逾期件。", relief: "向樊城区人民政府申请复议。", note: "法定到期边界直接被击穿。" },
+            { id: 30, applicant: "刘星驰", target: "襄阳市襄城区市场监督管理局", city: "襄阳市", date: "2026-04-23", reply_date: "未有效送达", type: "系统答复未送达", code: "条例第40条", is_legal: "违法/不作为", desc: "申请公开消费者权益案件数。系统5月6日显示“已办结”，但申请人通过邮箱或邮寄均未收到实体答复书。", type_eval: "系统答复未有效送达（程序违法）", law_eval: "《行政处罚法》《条例》等规定行政行为必须公开宣告或有效送达。在系统点击完成而未有效向当事人发送实体文书，该答复行为在法律上对申请人未发生法律效力。", proc_eval: "送达程序存在严重疏漏。流于形式，涉嫌系统作弊应付监督。", risk_tip: "等同于未答复。可在复议中直接撤销或责令其重新送达，面临不作为风险。", relief: "以程序违法不履行送达义务为由，向襄城区人民政府申请行政复议。", note: "系统显示办结（5月6日），但申请人完全未收到，送达失控。" },
+            { id: 31, applicant: "刘一鸣", target: "襄阳高新区市场监督管理局", city: "襄阳市", date: "2026-04-25", reply_date: "未答复", type: "未答复", code: "无", is_legal: "合规", desc: "申请公开案件。截至5月23日未收到回复。", type_eval: "待定状态（尚在法定期限内）", law_eval: "4月25日申请，截止5月23日（扣除劳动节放假顺延等），法定限期尚未完全溢出。暂不构成违法。", proc_eval: "尚在法定受理时限边缘。", risk_tip: "虽在期限内，但临近超期，需尽快发出书面答复，防止不作为转化。", relief: "无", note: "处于法定时限边缘，属于尚在办理期件。" },
+            { id: 32, applicant: "胡思贤", target: "枣阳市市场监督管理局", city: "襄阳市", date: "2026-04-27", reply_date: "2026-05-06", type: "部分指引查询", code: "条例第36条第(一)项、第38条", is_legal: "违法/不作为", desc: "申请公开2025年度投诉举报数及行政处罚案立案数和结案数。枣阳局部分指引查询，对立案和结案数以需加工分析拒绝。", type_eval: "部分指引与部分拒绝", law_eval: "投诉举报量提供查询链接合规。但将具体的处罚立案数和结案数以“需加工分析”为由拒绝属于典型法条滥用。案件的立案数和结案数属于登记备查的基本结构化数据，拒绝理由不能成立。", proc_eval: "时限内回复，流程合规。", risk_tip: "立案数与结案数部分拒绝构成严重适用法律错误，可被撤销。", relief: "60日内向枣阳市人民政府申请行政复议。", note: "混淆投诉数据与执法办案统计区别，拒绝理由违法。" },
+            { id: 33, applicant: "张瑾润", target: "老河口市市场监督管理局", city: "襄阳市", date: "2026-05-07", reply_date: "口头答复", type: "口头答复", code: "条例第40条", is_legal: "违法/不作为", desc: "申请公开消费者权益案件数。工作人员致电称“近几年办理保护消费者案件未记入系统，没有材料无法回复”，不给予书面答复。", type_eval: "口头答复（程序违法行为）", law_eval: "严重程序违法。无材料必须以书面形式并援引《条例》第三十六条第（四）项作“不掌握”或“不存在”的说明，严禁口头搪塞。此外，“未记入系统”暴露其自身执法的统计管理严重缺漏。", proc_eval: "严重违反书面送达要求。", risk_tip: "拒绝出具书面盖章答复，暴露监管系统严重漏洞，直接违法。", relief: "依法向老河口市人民政府提出复议，投诉其拒绝出具书面公文。", note: "无书面答复，电话搪塞说系统没录入无法提供。" },
+            { id: 34, applicant: "陈玥如", target: "老河口市市场监督管理局", city: "襄阳市", date: "2026-04-22", reply_date: "口头答复", type: "口头答复", code: "无", is_legal: "违法/不作为", desc: "申请公开消费者案件数。工作人员致电询问申请动机，以申请“范围过大”为由要求撤销申请，无书面答复。", type_eval: "口头规避（程序及动机审查违法）", law_eval: "根据《条例》规定，申请公开不审查目的动机。“范围过大”属于非法定理由，如果确实属于条例第30条规定的不明确，应当出具书面的“补正告知书一次性释明，而非电话威逼利诱撤回。", proc_eval: "程序严重失范。涉嫌给申请人非法施压撤回申请。", risk_tip: "以非法定借口电话要挟申请人放弃依申请公开权利，构成滥用职权程序违法。", relief: "向上级纪检或法制办投诉，同时可申请复议确认口头要挟程序违法。", note: "诱导甚至施压申请人撤回，无书面正式答复。" },
+            { id: 35, applicant: "邹浩宇", target: "谷城县行政审批局", city: "襄阳市", date: "2026-05-08", reply_date: "口头答复", type: "口头答复", code: "无", is_legal: "违法/不作为", desc: "申请公开市场监督管理局办理的案件。该局电告称非其管理范围，要求申请人自己上网撤销。", type_eval: "口头答复与施压撤销", law_eval: "严重违反程序。非本部门职责，必须出具书面答复书，援引第三十六条第（五）项“告知其向有权限的市场监管局申请”，不能口头应付或强制要求申请人撤销。", proc_eval: "程序不规范。", risk_tip: "属于典型的推诿卸责，程序违法性明确。", relief: "向谷城县人民政府申请行政复议。", note: "行政审批局不愿出具转办告知书，强制要求撤销。" },
+
+            // 宜昌市 (36-46)
+            { id: 36, applicant: "方津", target: "秭归县市场监督管理局", city: "宜昌市", date: "2026-04-22", reply_date: "2026-04-28", type: "不予提供+指引查询", code: "条例第38条", is_legal: "违法/不作为", desc: "申请消费者权益案件数量。该局以需要重新加工为由拒绝公开，但同时指引去查看行政处罚汇总表。", type_eval: "不予提供+行政指导", law_eval: "自相矛盾。能通过汇总表直接查询，说明信息并非需要重新提取加工，第38条拒绝理由彻底破产。", proc_eval: "期限内作出，迅速但漏洞明显。", risk_tip: "实体处理存在根本逻辑分裂，涉嫌滥用第38条规避责任，复议撤销率极高。", relief: "60日内向秭归县人民政府申请行政复议。", note: "能提供查阅年报链接，却以加工分析拒绝公开，逻辑不能自洽。" },
+            { id: 37, applicant: "刘星雨", target: "宜昌市西陵区市场监督管理局", city: "宜昌市", date: "2026-04-23", reply_date: "2026-05-14", type: "直接公开", code: "条例第36条第(二)项", is_legal: "合规", desc: "申请公开保护消费者权益的案件数。西陵局直接公开：2025年诉求件14596件，2026年截至5月办理4595件。", type_eval: "直接公开（基本合规）", law_eval: "援引第三十六条第（二）项，数据完整直接，救济告知完整。", proc_eval: "期限内完成，流程合规。", risk_tip: "提供的数据统计口径为“诉求件（含投诉咨询）”，口径大于“处罚案件数”。虽有统计口径微瑕，但秉承便民积极公开，应属基本合规件。", relief: "60日内向西陵区人民政府申请复议。", note: "公开数字高达万件，口径属于整体诉求数量。" },
+            { id: 38, applicant: "霍路鹏", target: "宜都市市场监督管理局", city: "宜昌市", date: "2026-04-23", reply_date: "2026-05-12", type: "指引查询", code: "条例第36条第(一)项", is_legal: "合规", desc: "申请消费者权益公开。指引到其公开平台具体链接自行查询。", type_eval: "指引查询（基本合规）", law_eval: "援引第三十六条第（一）项，且提供的链接包含具体年报数据，切合申请内容。", proc_eval: "时限内回复，流程完备。", risk_tip: "无显著违法点，指引较详细。", relief: "60日内向宜都市人民政府申请行政复议。", note: "指引具体链接较为便民。" },
+            { id: 39, applicant: "曾山", target: "枝江市市场监督管理局", city: "宜昌市", date: "2026-04-22", reply_date: "2026-05-08", type: "告知信息不存在", code: "条例第36条第(四)项", is_legal: "合规", desc: "申请公开2026年4月份消保行政处罚数，电询确认后，该局正式答复：经检索4月无消保行政处罚，信息不存在。", type_eval: "信息不存在告知（合规典型）", law_eval: "准确援引第三十六条第（四）项。在行政公开实务中，“数据零”即视为“信息不存在”。答复口径明确精准，毫无含糊推诿。", proc_eval: "积极电话沟通，确认具体范围后书面规范答复并送达。", risk_tip: "无违法点。属于对客观事实和统计期极其精准回复的正面公开样板。", relief: "60日内向枝江市人民政府申请行政复议。", note: "精准确指2026年4月无行政处罚，信息不存在。属正面典型。" },
+            { id: 40, applicant: "孔爱萍(郭家畅)", target: "兴山县市场监督管理局", city: "宜昌市", date: "2026-04-22", reply_date: "2026-04-28", type: "直接公开", code: "条例第36条第(二)项", is_legal: "合规", desc: "申请2025年投诉举报数量。兴山局公开：2025年受理投诉举报咨询562件（其中投诉460件，举报50件等，诉转案28件）。", type_eval: "直接公开（基本合规）", law_eval: "准确援引《条例》第三十六条第（二）项。公开数据细分了投诉、举报、信访，并明确列出挽回经济损失额及诉转案28件，质量很高。", proc_eval: "答复效率极高，6天内完成书面盖章送达。", risk_tip: "无实体违法点，数据口径契合申请，内容丰富真实。", relief: "60日内向兴山县人民政府申请复议。", note: "数据极其详尽，并包含诉转案核心消保数据。优质答复件." },
+            { id: 41, applicant: "李良震", target: "远安县市场监督管理局", city: "宜昌市", date: "2026-04-25", reply_date: "2026-05-13", type: "直接公开", code: "条例第36条第(二)项", is_legal: "合规", desc: "申请2025至今保护消费者权益案件数，远安局直接公开71件。", type_eval: "直接公开（合规典型）", law_eval: "准确援引第三十六条第（二）项。表述概念为“保护消费者权益的案件数量”，口径精准对齐，数据扎实。", proc_eval: "时限内书面复函并有效送达，文书无瑕疵。", risk_tip: "完全符合消保依申请公开规范，属正面先进案例。", relief: "60日内向远安县人民政府申请行政复议。", note: "数据准确，概念切合。正面范本。" },
+            { id: 42, applicant: "FN展锐", target: "宜昌市点军区市场监督管理局", city: "宜昌市", date: "2026-04-23", reply_date: "2026-05-12", type: "直接公开", code: "条例第36条第(二)项", is_legal: "不当/瑕疵", desc: "申请消费者权益保护办件数量，该局电询确认后公开：2025年11月至2026年4月共受理投诉297件，举报127件，咨询2件，共426件。", type_eval: "直接公开（概念混淆瑕疵）", law_eval: "外借第36条第（二）项，积极公开数据。但将“投诉举报咨询办件量”等同于“保护消费者权益案件数量”予以合并回答，属于混淆了行政纠纷调解登记与行政处罚立案的概念。", proc_eval: "20个工作日内作出，流程完整。", risk_tip: "属于概念上的不当混淆，事实认定不全面，但由于满足了公开数据意愿，瑕不掩瑜。", relief: "60日内向点军区人民政府申请复议。", note: "混淆投诉举报件数与处罚案卷数。" },
+            { id: 43, applicant: "杨泓烨", target: "宜昌市伍家岗区市场监督管理局", city: "宜昌市", date: "2026-05-06", reply_date: "2026-05-19", type: "部分指引查询", code: "条例第36条第(一)项、第38条", is_legal: "违法/不作为", desc: "申请公开2025年投诉举报数量及办案立案数 and 结案数。伍家岗局对投诉举报量指引网址自行查询，对立案数和结案数以需加工分析拒绝公开。", type_eval: "部分公开与不予提供", law_eval: "部分适用法律严重错误。投诉举报数据指引合规，防不作为。但对立案及结案数量这一备查常规信息以第38条“需加工分析”为由拒绝，属于滥用豁免。", proc_eval: "期限内作出，流程形式齐备。", risk_tip: "拒绝处罚立结案数量无充足法理抗辩，极易引发行政纠纷并败诉。", relief: "60日内向伍家岗区人民政府申请行政复议。", note: "选择性公开，对立案结案核心数据以加工分析为由阻挠公开。" },
+            { id: 44, applicant: "吴占阳", target: "当阳市市场监督管理局", city: "宜昌市", date: "2026-04-29", reply_date: "2026-05-09", type: "补正告知", code: "条例第30条", is_legal: "不当/瑕疵", desc: "申请消费者权益案件数量。当阳局要求补正明确检查数、处罚数、诉讼数、不予处罚数及投诉量等五类详细指标并指定年份。", type_eval: "补正告知（程序行为）", law_eval: "表面上依据《条例》第三十条，但其补正要求极度繁复，要求一个普通公民去区分“行政检查、不予处罚”等极其专业细分的内部口径，远远超出普通人的认知界限和获取能力。", proc_eval: "快速发出补正通知，补正期限至5月15日。", risk_tip: "涉嫌以过分繁杂、刁难性的“专业补正”为手段，变相提高门槛逼迫申请人知难而退，违反便民利民原则。", relief: "不补正按放弃处理。", note: "以极繁杂高门槛细项要求补正，涉嫌设置障碍变相拒绝。" },
+            { id: 45, applicant: "张佳裔", target: "宜昌市夷陵区市场监督管理局", city: "宜昌市", date: "2026-03-23", reply_date: "口头答复", type: "口头答复", code: "条例第40条", is_legal: "违法/不作为", desc: "申请近五年案件数量。仅收到工作人员电话告知近五年约15856件，未提供任何书面盖章公文。", type_eval: "口头答复（严重程序违法）", law_eval: "赤裸裸地违反《条例》第四十条。行政公开属要式行为，必须出具印章齐全、署名明确的书面政府信息公开答复书。", proc_eval: "未依法出具并送达书面文件。", risk_tip: "严重程序违法，口头回复在法律上视为不具有外部行政行为约束效力，可直接在法律上追究其不作为责任。", relief: "以未履行书面告知送达义务申请行政复议，要求限期出具正式文书。", note: "仅电话告知一串上万的数字，拒绝出具书面答复。" },
+            { id: 46, applicant: "吴占阳(补正后)", target: "当阳市市场监督管理局", city: "宜昌市", date: "2026-05-15", reply_date: "未答复", type: "未答复", code: "无", is_legal: "合规", desc: "申请人在2026年5月15日按照其要求完成补正重新提交。截至5月23日未收到任何回复。", type_eval: "待定状态（法定期限内）", law_eval: "5月15日补正后重新计算答复限期（20个工作日），截至5月23日仅过去6个工作日，尚在法定答复期内，暂未构成违法不作为。", proc_eval: "时限计算中。", risk_tip: "由于尚在期限内，被申请机关应加紧在期限内给予书面真实公开，避免转为逾期违法不作为。", relief: "无", note: "补正提交后尚未超期，继续观察办理。" },
+
+            // 荆州市 (47-54)
+            { id: 47, applicant: "陈洋", target: "荆州市荆州区政管局", city: "荆州市", date: "2026-04-28", reply_date: "2026-05-18", type: "直接公开", code: "条例第36条第(二)项", is_legal: "合规", desc: "申请区市监局消费者案件数。大数据局于5月18日书面直接公开：2025年利用《消法》办理的案件仅1件。", type_eval: "直接公开（合规件）", law_eval: "准确援用《条例》第三十六条第（二）项。虽然数据仅有1件（数据极少，表明可能大部分为投诉举报调解非处罚），但该局口径清晰界定为“利用消法及相关法律办理的行政处罚案”，定性极其专业精准。", proc_eval: "期限内规范作出，出具荆区政管复[2026]16号文，救济告知完整。", risk_tip: "完全合规，无行政法风险。1件的数据真实可信。", relief: "60日内向荆州市人民政府申请复议。", note: "概念极精准，界定为利用《消法》的案件。合规范例。" },
+            { id: 48, applicant: "周敬", target: "石首市政务服务和大数据管理局", city: "荆州市", date: "2026-04-23", reply_date: "2026-05-21", type: "告知不掌握", code: "条例第36条第(五)项", is_legal: "不当/瑕疵", desc: "申请市监局案件数，该局以不是制作单位告知不掌握，建议向市监局申请。", type_eval: "告知不掌握", law_eval: "适用法律基本准确，确实非该政管局制作。", proc_eval: "答复涉嫌超期。4月23日至5月21日长达28个自然日。即使扣除劳动节放假，由于无延期告知，程序仍存在一定的逾期程序违法瑕疵。", risk_tip: "存在程序时间瑕疵。没有利用内部政务网转办指引，对当事人便民性不够。", relief: "60日内向石首市人民政府申请行政复议。", note: "时间临界甚至超期，指引市监局线上线下申请。" },
+            { id: 49, applicant: "梁文灿", target: "公安县市场监督管理局", city: "荆州市", date: "2026-04-24", reply_date: "2026-05-14", type: "直接公开", code: "条例第36条第(二)项", is_legal: "合规", desc: "申请公开2026年公安县市场监督管理局办理的保护消费者权益行政处罚案件，该局于2026年5月6日作出《情况说明》书式公开，列出13起消费者权益相关案件目录（含药品、食品安全、加油加注、特种设备等领域违法）。", type_eval: "直接公开+清单", law_eval: "模范援引第三十六条第（二）项。主动、正面、完整地向申请人提供了该时间范围内立案查处的所有13起消费者案件清单，无任何推诿搪塞，事实极其清楚，法律界定精准。", proc_eval: "答复极为规范合规，救济途径告知完整、文号清晰。", risk_tip: "完全合法合规，法学逻辑坚实，属于正面合规实践。", relief: "60日内向公安县人民政府或荆州市人民政府申请行政复议，或6个月内向人民法院提起行政诉讼。", note: "依申请公开13起侵害消费者权益行政处罚案件。本省优质答复件." },
+            { id: 50, applicant: "刘毅", target: "监利市市场监督管理局", city: "荆州市", date: "2026-04-22", reply_date: "2026-05-06", type: "告知管辖", code: "条例第36条第(五)项", is_legal: "违法/不作为", desc: "申请监利市监局消保案件数。该局却答复建议向“监利市市场监督管理局咨询”。", type_eval: "告知管辖错误（推诿行为）", law_eval: "自相矛盾，荒谬透顶。本机关即为“监利市市场监督管理局”，却让申请人向“本局咨询”，这属于典型的内部承办科室敷衍塞责，直接否定了自身的行政主体和监管职责，严重适用法律错误。", proc_eval: "时限内作出，程序和实质完全不合格。", risk_tip: "极低级的逻辑错误，等于实质拒绝履行信息公开审查权，可100%被复议确认为违法不履行、推卸职责。", relief: "向上级市场监管局进行廉政与勤政投诉，并向上级政府提出行政复议。", note: "本局推给本局自己，滑稽至极，涉嫌渎职懒政。" },
+            { id: 51, applicant: "严春雨", target: "松滋市市场监督管理局", city: "荆州市", date: "2026-04-23", reply_date: "2026-04-30", type: "直接公开", code: "条例第36条第(二)项", is_legal: "合规", desc: "申请2025年1月1日至今消保案件数及结案率。松滋局直接公开：办件220件，结案率80.9%。", type_eval: "直接公开（合规标兵）", law_eval: "完美援引第三十六条第（二）项。对于结案率主动计算，更难得的是，在答复中对“消保行政处罚案”的统计口径进行了极为专业精准的界定（排除竞争秩序、知识产权等案，只算直接侵害消费者案）。", proc_eval: "效率极高。4月23日收件，4月30日即出具规范书面公文。盖章齐全，救济清晰。", risk_tip: "完美无瑕疵，体现了极高的业务法治化素养。与公安县人民政府并列为红榜榜首。", relief: "60日内向松滋市人民政府申请行政复议。", note: "口径定义极专业，数据详实。全省顶尖质量合规件。" },
+            { id: 52, applicant: "刘武", target: "石首市政务服务和大数据管理局", city: "荆州市", date: "2026-04-23", reply_date: "2026-05-21", type: "告知不掌握", code: "条例第36条第(五)项", is_legal: "不当/机制", desc: "申请石首市监局消保案件数。答复由于非制作机关不掌握，建议向市监局申请。", type_eval: "告知不掌握", law_eval: "适用法律基本合规。与周敬案相同处理。", proc_eval: "时限长达 28 天，无正当理由或延期说明，涉嫌逾期程序瑕疵。", risk_tip: "时间控制不严，存在被行政纠错的时限风险。", relief: "60日内向石首市人民政府申请行政复议。", note: "与周敬案相同处理。" },
+            { id: 53, applicant: "曾晓雪", target: "洪湖市市场监督管理局", city: "荆州市", date: "2026-04-29", reply_date: "2026-05-13", type: "直接公开", code: "条例第36条第(二)项", is_legal: "合规", desc: "申请2025年消费者权益案卷数。直接公开：办理消保类行政处罚案共2件。", type_eval: "直接公开（合规件）", law_eval: "准确援引《条例》第三十六条第（二）项，将消费者案件数确定为2件，救济告知详尽。", proc_eval: "时限内书面答复，程序极其规范，文号：洪市监信复[2026]2号。", risk_tip: "公开数字虽然微小（2件），本案事实清楚、依据准确、程序过关。", relief: "60日内向洪湖市人民政府申请复议。", note: "文书极其规范健全，数据准确。" },
+            { id: 54, applicant: "李智超", target: "江陵县市场监督管理局", city: "荆州市", date: "2026-04-27", reply_date: "2026-04-27", type: "不当施压撤回", code: "无", is_legal: "违法/不作为", desc: "申请消保行政处罚案件数。该局当天用邮箱简复由于设立以来仅有1件。但令人震惊的是，强制要求申请人填写并签署《撤回政府信息公开申请声明书》回传，才肯出具说明。", type_eval: "非法定程序要求（严重程序违法）", law_eval: "行政处罚或依申请公开中，严禁以提供信息为要挟逼迫申请人撤销申请。江陵局要求当事人签署撤回声明书，无任何法律根据，属于明显的滥用权力规避监管，构成严重的程序及实体双重违法。", proc_eval: "无正式盖章答复公文，当天逼迫撤回。程序严重违法失范。", risk_tip: "情节极为恶劣，属于恶意规避行政不公开考核。在复议或诉讼中将被严肃批判并 100% 认定违法行政，列入黑榜榜首。", relief: "可向上级纪检监察纠风办投诉，或申请复议撤销该限制公民知情权的非法施压行为。", note: "逼迫签署《撤回声明书》情节恶劣，无正规书面回复公文。" },
+
+            // 黄冈市 (55-62)
+            { id: 55, applicant: "杨禹淞", target: "团风县政管局", city: "黄冈市", date: "2026-04-23", reply_date: "2026-05-01", type: "告知不掌握", code: "条例第36条第(四)项", is_legal: "不当/瑕疵", desc: "申请公开消费者权益案件数量。该局以不掌握为由告知，并建议向麻城市人民法院起诉。", type_eval: "告知不掌握与管辖告知（瑕疵件）", law_eval: "援引法条错误。非本机关制作本应援引第三十六条第（五）项“非本机关制作或不掌握”，该局却阻挠援引第（四）项“信息不存在”，属于法条混淆。此外，管辖告知错误：本案若诉讼应由有管辖权的当地基层法院管辖，答复却告知向“麻城市人民法院起诉”（麻城为跨区域管辖法院），未交代该跨区域背景，易误导当事人。", proc_eval: "时间合规，但实体和司法救济告知不精准。", risk_tip: "救济途径指引错误属于重大程序和实质瑕疵。", relief: "60日内向团风县人民政府申请行政复议。", note: "救济法院告知存在歧义。援引法条错误。" },
+            { id: 56, applicant: "陈一啸", target: "黄冈市浠水县市场监督管理局", city: "黄冈市", date: "2026-04-23", reply_date: "2026-05-13", type: "不予提供+指引查询", code: "条例第38条", is_legal: "违法/不作为", desc: "申请消保案件数。浠水局以“加工分析（第38条）”为由不予提供，但指引去“信用中国”网站检索下载该局所有公示的处罚信息。", type_eval: "部分拒绝与行政指导", law_eval: "荒谬透顶、掩耳盗铃。既然案件信息已由你局推送至“信用中国”公示，证明数据完全属于已公开的结构化客观事实，根本不属于需要人工提炼分析的范畴。浠水局竟然以“加工分析”为由阻碍公开，属于法条滥用。", proc_eval: "20个工作日内作出。", risk_tip: "实体违法，逻辑自相矛盾，在司法审判中直接被撤销几率为 100%。", relief: "60日内向浠水县人民政府申请行政复议。", note: "数据都上传了信用中国，却以此借口拒绝，逻辑荒唐违法。" },
+            { id: 57, applicant: "王晶晶", target: "红安县市场监督管理局", city: "黄冈市", date: "2026-05-07", reply_date: "2026-05-19", type: "直接公开", code: "条例第36条第(二)项", is_legal: "不当/瑕疵", desc: "申请保护消费者案件数。红安局公开：2025年受理消费投诉举报件共3893件（含12315、12345）。", type_eval: "直接公开（概念严重混淆）", law_eval: "虽然在期限内主动公开并出具红市监依复[2026]02号公文，但存在严重的“案件-投诉”概念混淆。申请人申请的是“处罚案件数（执法的行政行为）”，该局拿“投诉受理总量（民事纠纷求助）”滥竽充数，未能直接解答其依法作出的消保处罚案数量。", proc_eval: "程序效率高，时限及送达合规。", risk_tip: "事实认定不全面，答非所问，属于典型的法律概念不清导致的行政瑕疵件。", relief: "60日内向红安县人民政府申请行政复议。", note: "概念混淆。拿投诉调解数据充当行政处罚案卷数据。" },
+            { id: 58, applicant: "方诚", target: "黄冈市武穴市市场监督管理局", city: "黄冈市", date: "2026-04-25", reply_date: "系统遗失/未答复", type: "未答复", code: "无", is_legal: "违法/不作为", desc: "申请消保案件数。截至5月23日，网站后台系统无法检索到方诚的该项申请，长期处于“不明确状态”，未收到答复。", type_eval: "行政不作为（系统性程序严重违法）", law_eval: "不依法履行职责。机关内部信息化建设或人员交接混乱导致依申请公开信件在系统“丢失”，该不利后果必须由行政机关承担，不能成为借口。", proc_eval: "严重超期不答复。", risk_tip: "系统遗失导致漏回，在司法审查中将被直接确认为“行政不作为违法”，行政责任极其被动。", relief: "向武穴市人民政府申请行政复议。", note: "系统管理混乱，导致申请数据丢失不回，实质严重违法。" },
+            { id: 59, applicant: "匿名", target: "黄冈市罗田县市场监督管理局", city: "黄冈市", date: "2026-04-23", reply_date: "未答复", type: "未答复", code: "无", is_legal: "违法/不作为", desc: "此前错向罗田县政府申请，后于4月23日由罗田县办公室指引，正式重新向罗田县市场监督管理局提交，截至5月23日未收到任何回复。", type_eval: "行政不作为", law_eval: "拒不履行法定依申请答复职责。", proc_eval: "超出20个工作日边界，涉嫌推诿不作为。", risk_tip: "县政府办已经做出指引，县市监局依然视而不见不作答，属于典型的消极不作为，行政法律风险极大。", relief: "向罗田县人民政府申请行政复议纠错不作为。", note: "县政府已转办，下级市监局依然逾期不回，违法明显。" },
+            { id: 60, applicant: "匿名", target: "黄冈市麻城市市场监督管理局", city: "黄冈市", date: "2026-05-08", reply_date: "口头答复", type: "口头答复", code: "条例第40条", is_legal: "违法/不作为", desc: "申请消保案件数.工作人员仅打来电话口头告知，不提供正式答复公文。", type_eval: "口头答复（程序违法行为）", law_eval: "严重违反《条例》第四十条。未制作并有效送达书面依申请答复书。", proc_eval: "程序不规范。", risk_tip: "极易在考核中被判定不作为或程序违法，丧失答复外部效力。", relief: "向麻城市人民政府申请复议，要求限期予以书面书式答复。", note: "仅电话联系，拒绝提供盖章件。" },
+            { id: 61, applicant: "匿名", target: "黄冈市英山县市场监督管理局", city: "黄冈市", date: "2026-05-08", reply_date: "口头答复", type: "口头答复", code: "条例第40条", is_legal: "违法/不作为", desc: "申请消保案件数。同样仅有电话简答口头情况，无任何书面材料回执或复函。", type_eval: "口头答复（程序违法）", law_eval: "不依法以书面送达公开结果，程序彻底违法。", proc_eval: "英山局程序极其草率。", risk_tip: "程序违法风险极高，面临复议诉讼纠错。", relief: "向上级市场监管局进行督查投诉或提请行政复议。", note: "仅电话简述，无任何盖章复函。" },
+            { id: 62, applicant: "余海洋", target: "孝感市孝昌县市场监督管理局", city: "黄冈市", date: "2026-05-19", reply_date: "未答复", type: "未答复", code: "无", is_legal: "合规", desc: "（注：本清单条目在原表中虽然被黄冈市法学班整理归口，但实际机关为孝感市孝昌县市场监督管理局）。申请人于5月19日正式规范提交。截至5月23日尚未超期。", type_eval: "待定状态（法定期限内）", law_eval: "5月19日刚正式受理，截至5月23日仅过去4个工作日，尚在法定答复期内。暂不构成不作为违法。", proc_eval: "办理期限进行中。", risk_tip: "无行政法违法。被申请人需按时在20个工作日内完成实体书面答复。", relief: "无", note: "（地理归口孝感孝昌）提交尚新，未超期，继续观察。" },
+
+            // 孝感市 (63-66)
+            { id: 63, applicant: "刘远卓", target: "大悟县市场监督管理局", city: "孝感市", date: "2026-04-22", reply_date: "2026-05-18", type: "指引查询", code: "条例第36条第(一)项", is_legal: "不当/瑕疵", desc: "申请人于4月22日和5月15日两次提出相同申请，该局合并作出指引答复：指引至全国12315平台和大悟县政府网站年报查询。", type_eval: "指引查询（概念混淆瑕疵）", law_eval: "维权投诉。但全国12315平台的公示核心是投诉调解信息，并非大悟县市场监督管理局自身的行政处罚案件，指引内容与申请“案件数量”口径严重不对齐。", proc_eval: "合并两次申请并在期限内回复，程序时限合规。", risk_tip: "指引的数据和平台无法支撑申请人获知“行政案件数”的需求，涉嫌偷换概念变相不公开。", relief: "60日内向大悟县人民政府申请行政复议。", note: "两次申请合并回复，但指引平台无法查询具体案件数。" },
+            { id: 64, applicant: "景怡", target: "云梦县市场监督管理局", city: "孝感市", date: "2026-04-22", reply_date: "2026-05-07", type: "指引查询", code: "条例第36条第(一)项", is_legal: "不当/瑕疵", desc: "申请公开消保案件数量。云梦局指引至政府信息公开平台自行搜索“年度行政执法统计年报”。", type_eval: "指引查询（变相不公开）", law_eval: "虽然形式上属于条例第36条第（一）项，但其指引非常笼统宽泛（仅给出了县市监局机构公开大网址，让申请人自行检索关键词），属于不够便民、不够负责的行政指引行为。", proc_eval: "时限内回复，流程合规。", risk_tip: "如果该年报内并未有细分的消保案件数据，此举极易在行政诉讼中被认定为“变相拖延、拒绝公开行政信息”。", relief: "60日内向云梦县人民政府申请行政复议。", note: "给个大网址让申请人像大海捞针一样自己搜索，存在消极公开嫌疑。" },
+            { id: 65, applicant: "余海洋(孝昌)", target: "孝感市孝昌县市场监督管理局", city: "孝感市", date: "2026-05-19", reply_date: "未答复", type: "未答复", code: "无", is_legal: "合规", desc: "申请消保案件数据。截至5月23日尚未超出法定20个工作日时限，程序正常进行中。", type_eval: "待定状态（期限内）", law_eval: "刚提出不久，不违法。", proc_eval: "期限计算中。", risk_tip: "暂无，需督促其按期书面处理。", relief: "无", note: "此件与5月19日正式提交的余海洋案重叠，属办理期内件。" },
+            { id: 66, applicant: "匿名", target: "孝感市孝昌县市场监督管理局", city: "孝感市", date: "2026-05-08", reply_date: "未答复", type: "未答复", code: "无", is_legal: "违法/不作为", desc: "申请消保案件数。截至5月23日系统状态一直为“待处理”状态，无回复。", type_eval: "行政不作为（逾期不作为风险件）", law_eval: "不作为程序违法。", proc_eval: "系统长期挂账未受理分配，时限所剩无几，基本属于逾期或极易超期件。", risk_tip: "长期处于待处理不理睬状态，无抗辩正当理由，构成行政程序不法。", relief: "向孝昌县人民政府申请行政复议。", note: "系统显示待处理，未采取实质办理步骤。" },
+
+            // 十堰市 (67-72)
+            { id: 67, applicant: "魏婷", target: "竹溪县数规办(政管局)", city: "十堰市", date: "2026-04-23", reply_date: "2026-04-30", type: "直接公开", code: "条例第36条第(二)项", is_legal: "不当/瑕疵", desc: "申请消保案件数。电话沟通确认为投诉举报数量，数规办回复公开：2025年受理消费投诉、举报共计1172件。", type_eval: "直接公开（概念严重混淆）", law_eval: "外向第三十六条第（二）项。但尽管经过电话沟通把口径窄化为“受理投诉举报数”，但在行政法上，“投诉举报调解”绝不等同于市场监督管理执法作出的“保护消费者权益案件”，混淆了基本的执法概念。", proc_eval: "程序高效，4月23日申请，4月30日迅速答复。", risk_tip: "答非所问，属于以投诉举报办结数强行替换行政处罚卷宗数量，事实定性不清，构成一定行政瑕疵。", relief: "60日内向十堰市人民政府申请行政复议。", note: "数据极快，但概念混淆，把投诉总量充当处罚案数量公开。" },
+            { id: 68, applicant: "赵倩倩", target: "十堰市张湾区人民政府", city: "十堰市", date: "2026-04-24", reply_date: "未答复", type: "未答复", code: "无", is_legal: "违法/不作为", desc: "通过官方公布的指定电子邮箱发送依申请公开表。截至5月22日已逾 29天，无任何答复邮件或电话联系。", type_eval: "行政不作为（严重程序违法）", law_eval: "不依法在时限内做出答复，构成违法。", proc_eval: "通过公开邮箱提交，机关未能日常维护邮箱，无任何签收及延期程序，已严重超期。", risk_tip: "漠视依申请公开渠道，在复议和诉讼中处于完全违法不作为状态，必败。", relief: "依法向十堰市人民政府提起复议，要求确认张湾区政府逾期不回复行为违法。", note: "邮箱申请石沉大海，暴露出邮箱渠道不日常维护的懒政漏洞。" },
+            { id: 69, applicant: "佘淼", target: "十堰市张湾区市场监督管理局", city: "十堰市", date: "2026-04-23", reply_date: "未答复", type: "未答复", code: "无", is_legal: "违法/不作为", desc: "通过邮箱（zwscjgj8269400@163.com）递交申请，未收到任何回复，且无延期告知。", type_eval: "行政不作为", law_eval: "违反答复时限，不作为程序违法。", proc_eval: "严重超期不答复。", risk_tip: "构成实质行政不作为。", relief: "向张湾区人民政府提起复议不作为指控。", note: "邮箱申请不理睬件。" },
+            { id: 70, applicant: "董林", target: "竹山县市场监督管理局", city: "十堰市", date: "2026-04-23", reply_date: "未答复", type: "未答复", code: "无", is_legal: "违法/不作为", desc: "发送申请表格至官方公布邮箱（zsxscjdgl@qq.com）。截至5月23日无回复。", type_eval: "行政不作为", law_eval: "程序违法不回复。", proc_eval: "严重逾期。", risk_tip: "邮箱申请渠道管理失控。抗辩理由极弱，复议撤销或确认违法率 100%。", relief: "向竹山县人民政府申请复议。", note: "官方公开邮箱接受申请后长期漏回。" },
+            { id: 71, applicant: "庄心晨", target: "十堰市郧阳区市场监督管理局", city: "十堰市", date: "2026-04-29", reply_date: "未答复", type: "未答复", code: "无", is_legal: "合规", desc: "申请区级消保案件。提交后当天被要求补正身份证正反面照片。5月8日郧阳区局电话确认正式受理其补正申请。", type_eval: "补正受理中（尚在时限内）", law_eval: "补正要求相对合规，目前时限重新计算。", proc_eval: "5月8日确认受理，至5月23日尚属于正常办件期间。无违法。", risk_tip: "无，应关注其能否在受理后的20个工作日内送达书面答复，防止拖延。", relief: "无", note: "补正受理状态，未超期。" },
+            { id: 72, applicant: "匿名", target: "十堰市郧阳区市场监督管理局", city: "十堰市", date: "2026-05-08", reply_date: "未答复", type: "未答复", code: "无", is_legal: "合规", desc: "5月8日电话确认正式受理消保申请案卷公开。目前尚未出具答复。", type_eval: "办理进行中（时限内）", law_eval: "时限正在计算中，合规。", proc_eval: "时限合法计算，继续办理中。", risk_tip: "无，属于法定办理时限内。", relief: "无", note: "5月8日与庄心晨案同批确认受理件。" },
+
+            // 恩施州 (73-79)
+            { id: 73, applicant: "吴涛", target: "来凤县人民政府", city: "恩施州", date: "2026-04-22", reply_date: "2026-05-19", type: "直接公开", code: "条例第36条第(二)项", is_legal: "不当/瑕疵", desc: "申请公开来凤县市场监督管理局2025年度办理的案件数。直接公开：2025年度办理消保案件数量为20件。", type_eval: "直接公开（基本合规）", law_eval: "准确援引第三十六条第（二）项。公开案件数20件，口径对齐。出具来政依复[2026]第19号规范复函，交代救济极其详尽。", proc_eval: "涉嫌超期程序瑕疵。4月22日申请，5月19日才答复，中间时间跨度27天，即便扣除法定劳动节等放假，时间仍极其临界甚至涉嫌超期一两天（无延期说明）。", risk_tip: "程序期限控制极为紧张。实体内容合规完备，无行政违法点。", relief: "60日内向恩施州人民政府申请行政复议，或6个月内向恩施州中级人民法院提起行政诉讼。", note: "数据精确（20件），复函规范。唯有答复期限有瑕疵嫌疑。" },
+            { id: 74, applicant: "于海洁", target: "巴东县市场监督管理局", city: "恩施州", date: "2026-04-23", reply_date: "2026-05-06", type: "指引查询", code: "条例第36条第(一)项", is_legal: "合规", desc: "申请消保案件。巴东局指引至“国家企业信用信息公示系统”选择“行政处罚公告”，输入“巴东”过滤查询。", type_eval: "指引查询（合规典型）", law_eval: "准确援引《条例》第三十六条第（一）项。并且指引的为国家企业信用信息公示系统，其直接公示巴东县所有的真实消保行政处罚案件，与“案件公开”申请目的完全匹配、指导详尽便民。", proc_eval: "期限内回复，流程合规。", risk_tip: "属于为数不多概念完全匹配、指引平台完全适格的正面指引范本。", relief: "60日内向巴东县人民政府申请行政复议。", note: "指引国家企业信用系统查询，十分精准便民。合规范本。" },
+            { id: 75, applicant: "田崇川", target: "巴东县市场监督管理局", city: "恩施州", date: "2026-04-23", reply_date: "2026-05-06", type: "指引查询", code: "条例第36条第(一)项", is_legal: "合规", desc: "与于海洁申请内容及指引答复完全一致。", type_eval: "指引查询（合规）", law_eval: "同于海洁案评析，合规。", proc_eval: "同于海洁案，期限内作复。", risk_tip: "无行政法风险。", relief: "向巴东县人民政府申请行政复议。", note: "处理和复函质量较高的指引件。" },
+            { id: 76, applicant: "匿名", target: "恩施市市场监督管理局", city: "恩施州", date: "2026-04-28", reply_date: "未答复", type: "未答复", code: "无", is_legal: "违法/不作为", desc: "申请消保案件数。截至5月22日系统未作任何处理或答复。", type_eval: "行政不作为", law_eval: "违反答复时限，程序违法。", proc_eval: "逾期违法。", risk_tip: "明显程序不法行为，构成不作为纠错要件。", relief: "向恩施市人民政府提起行政复议。", note: "超期漏回复件。" },
+            { id: 77, applicant: "邹浩宇", target: "建始县人民政府", city: "恩施州", date: "2026-04-22", reply_date: "未答复", type: "未答复", code: "无", is_legal: "违法/不作为", desc: "在建始县官网提交信息公开，截至5月22日（长达31天）未收到任何复函及联系，系统未处理。", type_eval: "行政不作为（严重程序违法）", law_eval: "完全不作为程序违法。漠视公众依申请公开渠道。", proc_eval: "严重超期。", risk_tip: "建始县人民政府作为行政主体直接漏回复依申请，法律责任极其被动，面临司法败诉风险大。", relief: "向恩施州人民政府申请行政复议纠错不作为。", note: "县政府在线提交后31天无人认领不予处理。" },
+            { id: 78, applicant: "雷雅珺", target: "利川市市场监督管理局", city: "恩施州", date: "2026-04-27", reply_date: "未有效送达", type: "系统答复未送达", code: "条例第40条", is_legal: "违法/不作为", desc: "申请消保案件。电话电询后发来一个乱码无法打开的链接，再次电告后对方敷衍说重发，但截至5月23日没有任何邮件和实体回复，查询无果。", type_eval: "未依法有效送达（程序严重违法）", law_eval: "发送乱码、打不开的废链接，并拒绝重发，导致申请人知情权实质被剥夺。在程序上构成了“未有效履行送达告知义务”行为，在实体上构成变相拒绝公开。", proc_eval: "送达程序流于形式，甚至涉嫌敷衍忽悠当事人，违法性质严重。", risk_tip: "该局无法提供证明答复内容已成功传达至当事人邮箱的可靠信源，属于实质不作为违法。", relief: "向上级市场监管总局和恩施州法制办投诉，同时依法申请行政复议。", note: "提供乱码坏链接后敷衍搪塞，拒绝正式邮寄书面答复。" },
+            { id: 79, applicant: "沈宣彤", target: "宣恩县市场监督管理局", city: "恩施州", date: "2026-05-07", reply_date: "2026-05-19", type: "直接公开", code: "条例第36条第(二)项", is_legal: "不当/瑕疵", desc: "申请消保案件数量。该局直接公开：2025年度共办理一般程序案件152起，并通过系统向信用系统推送。", type_eval: "直接公开（口径过宽瑕疵）", law_eval: "积极公开并援引《条例》第三十六条第（二）项。但存在统计口径偏差瑕疵。申请人要的是“保护消费者权益的案件（仅含消保处罚）”，该局提供的是“所有一般程序案件数（含特种设备、注册登记、网络竞争等）”，口径偏宽，事实定性不够精准。", proc_eval: "时限内回复，流程完整。", risk_tip: "数据虽然失准（范围偏大），但秉承积极公开原则，一般不作为诉讼挑战点，属于瑕疵件。", relief: "60日内向宣恩县人民政府申请行政复议。", note: "把全局所有一般处罚案一锅端提供，口径失真偏大。" },
+
+            // 随州市 (80-82)
+            { id: 80, applicant: "张家诚", target: "随州市市场监督管理局", city: "随州市", date: "2026-04-22", reply_date: "2026-05-06", type: "直接公开", code: "条例第36条第(二)项", is_legal: "合规", desc: "申请市局办理案件数。直接公开：全市市场监管系统2025年办理消保处罚案1368件；2026年1-4月办理320件。", type_eval: "直接公开（合规典范）", law_eval: "完美援引第三十六条第（二）项。公开全市系统数据，分级分类陈述，有2025年总量及2026年细分量，口径非常切合消保处罚。", proc_eval: "高效答复。4月22日申请，5月6日即规范书面公文（随市监依复[2026]第3号）送达。救济指引详尽。", risk_tip: "完全合法合规，是市级市场监督管理部门依申请公开数据答复的最佳合规正面示范。", relief: "60日内向随州市人民政府申请复议，或6个月内向曾都区人民法院提起诉讼。", note: "地级市局答复中质量最高，数据细致分级，程序极速合规。" },
+            { id: 81, applicant: "江煜霖", target: "随县市场监督管理局", city: "随州市", date: "2026-04-23", reply_date: "2026-04-28", type: "直接公开", code: "条例第36条[二]", is_legal: "不当/瑕疵", desc: "电沟通后申请人无奈将原本的“消费者权益案卷”限缩成“近三年食品案件数”，随县局回复公开：23年93件，24年130件，25年125件（均含不予处罚数）。", type_eval: "直接公开（沟通变异瑕疵）", law_eval: "援引第三十六条第（二）项。但通过电询强行引导当事人改变原始“消费者权益案件”申请意向，缩减为“食品案卷”，涉嫌回避其他消保非食品案件统计，存在公开履行不充分之瑕疵。", proc_eval: "效率极高。4月23日收件，4月28日迅速书面作出送达。", risk_tip: "如果当事人能证明限缩并非其内心真实意愿，行政机关涉嫌规避公开消保全口径案卷职责。", relief: "60日内向随县人民政府申请行政复议。", note: "引导限缩申请范围成食品案，回避全口径消费案，存在投机嫌疑。" },
+            { id: 82, applicant: "邹浩宇(随州)", target: "广水市人民政府", city: "随州市", date: "2026-04-22", reply_date: "未答复", type: "未答复", code: "无", is_legal: "违法/不作为", desc: "（申请人因套用模板失误，错在广水市官网提交了写有建始县局抬头之公开表）。广水市政府办公室对其不作理睬、不作为。", type_eval: "行政不作为（非法定不处理程序违法）", law_eval: "根据《条例》及依申请合规精神，如果材料有形式瑕疵或内容混淆不明确，行政机关应当一次性书面通知申请人补正（第三十条），而不能以此为借口直接将其打冷宫、不理不睬不回复。", proc_eval: "不理不睬严重逾期31天不作为。", risk_tip: "将形式瑕疵错配为“不予理睬”，在司法中该不回复不理睬行为直接被确认为程序违法和消极不履行法定职责。", relief: "向随州市人民政府申请复议纠错不理睬不作为。", note: "利用申请表形式瑕疵直接当垃圾邮件不予处理，构成程序失职违法。" },
+
+            // 咸宁市 (83-85)
+            { id: 83, applicant: "汪锦琦", target: "通山县市场监督管理局", city: "咸宁市", date: "2026-05-09", reply_date: "2026-05-19", type: "不予公开", code: "条例第16条第1款、第36条第(三)项", is_legal: "违法/不作为", desc: "申请公开2025年投诉举报数量、办案立案数及结案数，通山县市场监督管理局出具“通市监依复〔2026〕第1号”决定书，决定不予公开。", type_eval: "行政拒绝（严重适用法律错误行为）", law_eval: "典型适用法律错误，全省行政审计最差案例。错误援引《信息公开条例》第十六条第一款。行政执法案件的立案、结案数据属于行政机关对外执法的客观事实成果，并非行政机关“内部事务信息”。", proc_eval: "20个工作日内作出并加盖公章，程序上满足时限，但实质违法严重。", risk_tip: "涉嫌恶意规避行政不公开红线，将公共执法统计数据曲解、降级为内部事务处理，在行政复议和行政诉讼中败诉率为 100%。", relief: "60日内向通山县人民政府申请复议，或6个月内向通山县人民法院提起行政诉讼。", note: "将侵害消费者权益行政案件的立、结案数量界定为内部事务拒绝公开，属于公然对抗上位法，法理完全不成立。" },
+            { id: 84, applicant: "郭家畅", target: "咸宁市咸安区人民政府", city: "咸宁市", date: "2026-04-22", reply_date: "未答复", type: "未答复", code: "无", is_legal: "违法/不作为", desc: "在线提交公开申请区市场监管局案件数。截至5月23日无任何书面回复或联系，长期处于无声状态。", type_eval: "行政不作为", law_eval: "违反依申请公开时限，程序违法。", proc_eval: "严重超期 30 余天不履行职责。", risk_tip: "不作为程序违法，容易被行政复议责令公开纠错。", relief: "向咸宁市人民政府申请复议张湾区/咸安区政府不作为。", note: "政府在线依申请渠道形同虚设，逾期不处理。" },
+            { id: 85, applicant: "牛单", target: "嘉鱼县政管局", city: "咸宁市", date: "2026-04-22", reply_date: "2026-04-30", type: "告知不掌握", code: "条例第36条第(五)项", is_legal: "合规", desc: "申请消保案件。回复由于非制作局，不掌握数据，建议向嘉鱼县市场监督管理局（迎宾大道52号）申请并提供电话。", type_eval: "告知不掌握（合规件）", law_eval: "准确援引第三十六条第（五）项。并且极具人性的告知了建议机关详细线下地址及真实电话，体现了便民公开、实事求是作风。", proc_eval: "8天内极其迅速回复送达书面书式公文。", risk_tip: "无行政法风险。指引非常精准便民。", relief: "60日内向嘉鱼县人民政府申请行政复议。", note: "指引被申请机关极其周全，附有地址与电话。较好答复。" },
+
+            // 荆门市 (86-89)
+            { id: 86, applicant: "王晨昱", target: "荆门市东宝区市场监督管理局", city: "荆门市", date: "2026-04-23", reply_date: "2026-04-23", type: "补正告知", code: "条例第30条", is_legal: "合规", desc: "申请东宝区局消保案件数。因未注明具体时间年份范围，该局当天立即出具《补正告知书》，程序标准合法。", type_eval: "补正告知（程序合规典型）", law_eval: "准确援引《条例》第三十条。释明原因合法，要求在2026年5月16日前补正指定时间段。", proc_eval: "极速。4月23日收到申请，当天立刻出具补正告知并送达指定邮箱，毫无拖延。", risk_tip: "无任何违法风险，程序时效一流，属补正程序的合规教材范例。", relief: "补正无特定救济指引。", note: "当天发出补正，反应极速，告知明晰。合规典范。" },
+            { id: 87, applicant: "张宇涵", target: "荆门市东宝区市场监督管理局", city: "荆门市", date: "2026-04-28", reply_date: "2026-04-28", type: "部分公开", code: "条例第36条第(二)项、第(四)项", is_legal: "合规", desc: "上案王晨昱补正年份后重新于4月28日递交。东宝局当天立即作出复函：直接公开2025年度共办理保护消费者案件24896件；2026年由于本年度未结束尚未制作完成，第(四)项暂不提供，并体贴建议2027年一季度后再申请2026年度。", type_eval: "部分公开+不存在（全省高赞正面先进样板）", law_eval: "完美援引第三十六条第（二）、（四）项。对已完成的2025年度予以彻底公开（数据高，需注意口径包含投诉总量，但公开极其坦诚直接）；对尚未产生终期年度统计的2026年予以不掌握说明，并给出了具体暖心的预期时间告知。", proc_eval: "神速。4月28日收到补正递交，当天立即书面作复盖章发送。救济指引无任何瑕疵。", risk_tip: "无行政风险。法治素养和办事效率堪称地市级局模范典型，强烈推荐列入红榜表彰。", relief: "60日内向东宝区人民政府申请行政复议，或6个月内向荆门市掇刀区人民法院提起诉讼。", note: "补正递交当天立刻复函。数据坦诚，指引极暖心。红榜明星件。" },
+            { id: 88, applicant: "鲁德航", target: "钟祥市市场监督管理局", city: "荆门市", date: "2026-04-23", reply_date: "2026-04-30", type: "指引查询", code: "条例第36条第(一)项", is_legal: "合规", desc: "申请消保案件数。该局直接告知已办理侵害消费者权益案件11起，并同时指引至国家信用系统进一步核查获取。", type_eval: "指引查询（实质公开合规）", law_eval: "援引第三十六条第（一）项。但该局做法非常积极：“先直接喂鱼（告知了11起的数据），再授人以渔（提供信用系统详细查询方法）”，兼顾指引与正面公开，极便民。", proc_eval: "7天内书面盖章复函送达。救济清晰。", risk_tip: "无实体和程序违法点。质量非常高。", relief: "60日内向钟祥市人民政府申请行政复议。", note: "先告知数据11起，再指引方法，极其便民负责。" },
+            { id: 89, applicant: "李冠驰", target: "荆门市漳河新区市场监督管理局", city: "荆门市", date: "2026-04-24", reply_date: "未答复", type: "未答复", code: "无", is_legal: "违法/不作为", desc: "申请消保案件。按要求补正具体年份后于4月24日后重新提交。截至5月23日无任何书面消息回复。", type_eval: "行政不作为（逾期违法）", law_eval: "补正提交后重新起算20个工作日时限，目前已远远溢出时间，构成程序违法。", proc_eval: "严重超期漏回复。", risk_tip: "对已经补正的案卷失去跟进管理，导致直接逾期不作为违法。", relief: "向荆门市人民政府申请行政复议不作为。", note: "补正提交后却被彻底搁置漏回。" },
+
+            // 鄂州市 (90-92)
+            { id: 90, applicant: "沈淼", target: "鄂州市鄂城区市场监督管理局", city: "鄂州市", date: "2026-04-24", reply_date: "2026-04-30", type: "不予提供", code: "条例第38条", is_legal: "违法/不作为", desc: "申请本年度目前消费者案件数。鄂城区局以需加工分析不予公开。此外，该答复在网站展示无答复单位盖章公章，需截屏获取。", type_eval: "行政拒绝+公文形式严重违法", law_eval: "严重违法。滥用第38条拒绝基础数量公开违法；更恶劣的是，在行政程序法上，对外复函无行政机关印章属于“未成立、不具约束效力”之无效行政行为，严重违反《条例》要式及格式规定。", proc_eval: "程序不规范。无实体盖章，只能依靠网络截图，送达程序极其失范潦草。", risk_tip: "无盖章公文属于低级的致命行政行为形式违法，复议必被纠正通报批评。", relief: "无明确告知，属于权利救济瑕疵。可在期限内向鄂城区人民政府提起复议诉讼。", note: "拒绝公开法律依据错误。给出的复函无单位盖章公章，行政行为形式无效。" },
+            { id: 91, applicant: "匿名", target: "鄂州市华容区人民政府", city: "鄂州市", date: "2026-04-22", reply_date: "未答复", type: "未答复", code: "无", is_legal: "违法/不作为", desc: "向华容区政府在线提交依申请，长达31天无任何声音，石沉大海。", type_eval: "行政不作为", law_eval: "严重违反法定答复期，不作为程序违法。", proc_eval: "华容区政府完全未履行认领审查答复法定职责，程序违法严重。", risk_tip: "完全不作为违法，承担司法直接纠错和确认为不法行为的判决风险。", relief: "向鄂州市人民政府提起复议区政府不作为。", note: "区政府层面邮箱及在线渠道彻底漏回，管理混乱。" },
+            { id: 92, applicant: "陈浪", target: "鄂州市梁子湖区市场监督管理局", city: "鄂州市", date: "2026-04-22", reply_date: "2026-04-30", type: "不予提供", code: "条例第38条", is_legal: "违法/不作为", desc: "申请梁子湖局办理的消费者案件。以加工分析拒绝提供，同样在梁子湖区官网答复且无单位公章盖章，截屏获取。", type_eval: "行政拒绝+程序及形式无效", law_eval: "与沈淼案性质一模一样。存在严重的实体法条滥用（第38条），且无任何正式行政公章印戳，等同于虚无答复。", proc_eval: "送达和书面形式完全不合规。", risk_tip: "双重严重程序和实质违法，极具可诉性。直接属于黑榜典型代表。", relief: "可在法定期限内向上级复议机关提出行政纠错。", note: "无公章，以加工分析违法阻碍信息公开，行政行为存在重大程序缺陷。" },
+
+            // 黄石市 (93)
+            { id: 93, applicant: "陈少涵", target: "黄石大冶市市场监督管理局", city: "黄石市", date: "2026-04-24", reply_date: "2026-05-06", type: "直接公开", code: "条例第36条第(二)项", is_legal: "不当/瑕疵", desc: "申请2020-2025年消保案件数。该局主动登录全国12315系统检索大冶局2021至2025年底共5年数据：21年(下半)936件，22年3831件，23年3017件，24年3453件，25年3359件，合计14596件。", type_eval: "直接公开（概念及口径混淆瑕疵）", law_eval: "积极公开并授给第三十六条第（二）项。态度极其端正，主动追溯检索5年，并向当事人拉出分年统计表，极其配合。但其提取的系统数据为“12315消费者投诉、举报和咨询登记总量（非行政处罚量）”，在概念上混淆了投诉与执法处罚卷宗数。", proc_eval: "期限内答复，流程及书面文书规范。12天作出。", risk_tip: "虽然概念存在混淆，但因公开态度极佳且数据丰富满足申请人期望，属于极其优质可取的瑕疵件。", relief: "60日内向大冶市人民政府申请行政复议。", note: "极具责任感检索5年数据，唯有数据口径为投诉总量非处罚案件。优质典型。" },
+
+            // 省直辖县级单位 (94-98)
+            { id: 94, applicant: "李庆", target: "天门市市场监督管理局", city: "省直辖", date: "2026-04-23", reply_date: "2026-05-18", type: "直接公开", code: "条例第36条第(二)项", is_legal: "合规", desc: "申请公开消保案件数量。沟通确认口径后，天门局书面直接公开：2024年4月至2026年4月，案源属投诉举报后立案处罚的消保案件共288件。", type_eval: "直接公开（合规典型范本）", law_eval: "准确援引《条例》第三十六条第（二）项。天门局表现极为专业，其在复函中精确定义口径为：“案件来源为投诉、举报、12315，经转案并进行行政处罚的消保案件为288件”，概念完全澄清，消除了案件和单纯投诉的混淆，专业度极高。", proc_eval: "20个工作日内作出书面盖章复函（天市监依复[2026]第0503号）。救济告知完美。", risk_tip: "无行政法风险。属于省直辖单位中最具法治功底和示范价值的正面案例，强烈推荐入红榜。", relief: "60日内向天门市人民政府申请行政复议，或6个月内向天门市人民法院提起行政诉讼。", note: "精准界定诉转处罚案288件，口径定性极高，无概念混淆。全省优质答复标杆。" },
+            { id: 95, applicant: "闫鑫", target: "仙桃市市场监督管理局", city: "省直辖", date: "2026-04-23", reply_date: "未有效送达", type: "系统答复未送达", code: "条例第40条", is_legal: "违法/不作为", desc: "申请公开消保案卷数量。仙桃局后台点击了办结，但申请人通过其反复确认有效的电子邮箱，以及邮政快递，在法定期限满后均未收到任何文字通知或附件。", type_eval: "送达程序虚假违法", law_eval: "不依法送达。仙桃局仅在系统内“办结应付考核”，却完全没有对外部当事人完成物理送达或网络送达，导致该外部行政答复对申请人至今不产生法律效力，剥夺申请人救济权。", proc_eval: "严重程序违法失范，形式办结实体漏发。", risk_tip: "虚假应付考核，构成事实上的违法不作为，复议诉讼具有败诉确定性，应列入黑榜并全省通报批评。", relief: "可以程序严重违法及未依法送达为由，向仙桃市人民政府申请行政复议督办。", note: "后台系统点已结案应付考核，却未实际发邮件/邮寄答复书，程序虚无违法。" },
+            { id: 96, applicant: "周阳", target: "神农架林区市场监督管理局", city: "省直辖", date: "2026-04-22", reply_date: "未答复", type: "未答复", code: "无", is_legal: "违法/不作为", desc: "通过官网提交消保案件数量。截至5月23日超期，无任何电话、短信或正式书面文件联系，处于挂起冷漠状态。", type_eval: "行政不作为", law_eval: "不依期限答复，程序违法。", proc_eval: "严重超时未作答。", risk_tip: "林区市监局彻底漠视公开申请，直接构成消极不作为违法。", relief: "向神农架林区人民政府申请行政复议确认不作为违法。", note: "神农架林区依申请渠道冷漠挂起超期未复。受理号：2026042247973084。" },
+            { id: 97, applicant: "赵凌锋", target: "潜江市市场监督管理局", city: "省直辖", date: "2026-04-23", reply_date: "未答复", type: "未答复", code: "无", is_legal: "违法/不作为", desc: "申请公开消保案件数据。潜江局截至5月23日法定截止期满没有任何答复，处于沉默状态。", type_eval: "行政不作为", law_eval: "超期不答复程序不合规。", proc_eval: "直接不履行法定公开职责超期。", risk_tip: "无正当抗辩，确认违法或复议责令公开几率为 100%。", relief: "向潜江市人民政府申请复议行政不作为。", note: "系统待办单号：2026042332839316。" },
+            { id: 98, applicant: "李赏", target: "仙桃市人民政府", city: "省直辖", date: "2026-04-30", reply_date: "未答复", type: "未答复", code: "无", is_legal: "合规", desc: "在仙桃市依申请平台提交市监局案卷数据，截至5月22日系统正常处于待处理和审核期中，未获回复。", type_eval: "办理时限内（暂不违法）", law_eval: "4月30日提交，由于劳动节假期顺延，截至5月22日尚未溢出20个工作日边界。程序合法进行中。", proc_eval: "期限计算内。", risk_tip: "无，建议督促仙桃市政府法制办和市监局尽快在期限内作出盖章复函送达，防止演化为同城漏回复闫鑫案那样的严重程序不法行为。", relief: "无", note: "时限合法中，重点跟进送达程序防规避。" }
+        ];
+
+        let activeFilterCity = "";
+        let activeFilterType = "";
+        let replyChartInstance = null;
+        let cityChartInstance = null;
+
+        document.addEventListener('DOMContentLoaded', function () {
+            // 1. 初始化核心统计图表
+            initCharts();
+            // 2. 渲染原始案卷抽屉数据
+            renderCases(rawCasesDatabase);
+            // 3. 默认开启红榜
+            switchDocTab('red');
+            // 4. 默认开启实体违法分析
+            switchAnalysisTab('ent');
+        });
+
+        // 统一提示函数
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            const msgSpan = document.getElementById('toast-message');
+            msgSpan.textContent = message;
+            toast.classList.remove('opacity-0', 'pointer-events-none', 'scale-95');
+            toast.classList.add('opacity-100', 'scale-100');
+            setTimeout(() => {
+                toast.classList.remove('opacity-100', 'scale-100');
+                toast.classList.add('opacity-0', 'pointer-events-none', 'scale-95');
+            }, 3000);
+        }
+
+        // 数据大屏 Chart.js 初始化
+        function initCharts() {
+            // 计算答复定性数量分布
+            const typeCounts = {
+                '直接公开': 0,
+                '指引查询': 0,
+                '不予提供': 0,
+                '不予公开': 0,
+                '告知不掌握': 0,
+                '未答复': 0,
+                '口头答复': 0,
+                '补正告知': 0,
+                '告知管辖': 0,
+                '其他': 0
+            };
+
+            const cityCounts = {
+                '武汉市': 0, '襄阳市': 0, '宜昌市': 0, '荆州市': 0, '黄冈市': 0,
+                '十堰市': 0, '恩施州': 0, '孝感市': 0, '荆门市': 0, '随州市': 0,
+                '咸宁市': 0, '鄂州市': 0, '黄石市': 0, '省直辖': 0
+            };
+
+            rawCasesDatabase.forEach(c => {
+                let t = c.type;
+                if (t.includes('不予提供')) t = '不予提供';
+                if (t.includes('不予公开')) t = '不予公开';
+                if (t.includes('指引查询')) t = '指引查询';
+                if (t.includes('系统答复未送达')) t = '未答复';
+                
+                if (typeCounts[t] !== undefined) {
+                    typeCounts[t]++;
+                } else {
+                    typeCounts['其他']++;
+                }
+
+                if (cityCounts[c.city] !== undefined) {
+                    cityCounts[c.city]++;
+                }
+            });
+
+            // 绘制定性 Doughnut
+            const ctx1 = document.getElementById('replyTypeChart').getContext('2d');
+            replyChartInstance = new Chart(ctx1, {
+                type: 'doughnut',
+                data: {
+                    labels: Object.keys(typeCounts),
+                    datasets: [{
+                        data: Object.values(typeCounts),
+                        backgroundColor: [
+                            '#10b981', // 直接公开
+                            '#3b82f6', // 指引查询
+                            '#f59e0b', // 不予提供
+                            '#ef4444', // 不予公开
+                            '#6366f1', // 告知不掌握
+                            '#475569', // 未答复
+                            '#ec4899', // 口头答复
+                            '#14b8a6', // 补正告知
+                            '#8b5cf6', // 告知管辖
+                            '#cbd5e1'  // 其他
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'right',
+                            labels: { boxWidth: 8, font: { size: 8 } }
+                        }
+                    },
+                    onClick: (evt, activeElements) => {
+                        if (activeElements.length > 0) {
+                            const index = activeElements[0].index;
+                            const label = replyChartInstance.data.labels[index];
+                            activeFilterType = label;
+                            showToast(`已按回复类型过滤: ${label}`);
+                            filterCasesByChart();
+                        }
+                    }
+                }
+            });
+
+            // 绘制地市 Bar
+            const ctx2 = document.getElementById('cityChart').getContext('2d');
+            cityChartInstance = new Chart(ctx2, {
+                type: 'bar',
+                data: {
+                    labels: Object.keys(cityCounts),
+                    datasets: [{
+                        label: '申请数',
+                        data: Object.values(cityCounts),
+                        backgroundColor: '#1e3a8a',
+                        hoverBackgroundColor: '#b91c1c',
+                        borderRadius: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: { beginAtZero: true, ticks: { font: { size: 8 } } },
+                        x: { ticks: { font: { size: 8 } } }
+                    },
+                    plugins: { legend: { display: false } },
+                    onClick: (evt, activeElements) => {
+                        if (activeElements.length > 0) {
+                            const index = activeElements[0].index;
+                            const label = cityChartInstance.data.labels[index];
+                            activeFilterCity = label;
+                            document.getElementById('cityFilter').value = label;
+                            showToast(`已按地市过滤: ${label}`);
+                            filterCases();
+                        }
+                    }
+                }
+            });
+        }
+
+        // 双图表联合过滤
+        function filterCasesByChart() {
+            let filtered = rawCasesDatabase;
+            if (activeFilterType) {
+                filtered = filtered.filter(c => {
+                    let t = c.type;
+                    if (t.includes('不予提供')) t = '不予提供';
+                    if (t.includes('不予公开')) t = '不予公开';
+                    if (t.includes('指引查询')) t = '指引查询';
+                    if (t.includes('系统答复未送达')) t = '未答复';
+                    return t === activeFilterType;
+                });
+            }
+            if (activeFilterCity) {
+                filtered = filtered.filter(c => c.city === activeFilterCity);
+            }
+            renderCases(filtered);
+            
+            // 更新卡片提示词防止空白误解
+            document.getElementById('chart-selection-tip').innerHTML = `
+                <div class="flex justify-between items-center px-2">
+                    <span>当前过滤类型: <b>${activeFilterType || '不限'}</b></span>
+                    <button onclick="resetAllFilters()" class="text-[9px] bg-red-600 text-white px-1.5 py-0.5 rounded hover:bg-red-700 transition">清除</button>
+                </div>
+            `;
+        }
+
+        // 重置所有全局过滤器
+        function resetAllFilters() {
+            document.getElementById('searchInput').value = "";
+            document.getElementById('cityFilter').value = "";
+            document.getElementById('legalFilter').value = "";
+            activeFilterCity = "";
+            activeFilterType = "";
+            renderCases(rawCasesDatabase);
+            
+            // 恢复提示
+            document.getElementById('chart-selection-tip').innerHTML = `
+                💡 点击图表任意区域，右侧案卷抽屉可实现动态联动
+            `;
+            showToast("已重置全局所有的图表和搜索过滤！");
+        }
+
+        // 渲染案卷抽屉表格/列表
+        function renderCases(casesArray) {
+            const container = document.getElementById('casesList');
+            document.getElementById('case-count').textContent = `共 ${casesArray.length} 件`;
+            
+            if (casesArray.length === 0) {
+                // 防塌陷：高水准空状态设计，牢牢撑起 270px 容器，杜绝网页出现空白窟窿
+                container.innerHTML = `
+                    <div class="flex flex-col items-center justify-center py-10 bg-slate-50 border border-dashed border-slate-200 rounded-lg text-slate-400 text-xs h-[230px]">
+                        <i class="fa-solid fa-folder-open text-slate-300 text-3xl mb-2"></i>
+                        <span class="font-semibold text-slate-500 mb-1">无满足当前合规筛选的案卷</span>
+                        <p class="text-[10px] text-slate-400 mb-3 text-center px-4">尝试清除过滤条件或进行全局模糊检索</p>
+                        <button onclick="resetAllFilters()" class="bg-blue-600 text-white font-bold px-3 py-1 rounded text-[10px] hover:bg-blue-700 transition shadow-sm">
+                            <i class="fa-solid fa-rotate-left mr-1"></i>重置检索
+                        </button>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = casesArray.map(c => {
+                let badgeColor = "bg-slate-100 text-slate-600 border-slate-200";
+                if (c.is_legal === '合规') badgeColor = "bg-emerald-50 text-emerald-700 border-emerald-200";
+                if (c.is_legal === '不当/机制' || c.is_legal === '不当/瑕疵') badgeColor = "bg-amber-50 text-amber-700 border-amber-200";
+                if (c.is_legal === '违法/不作为') badgeColor = "bg-red-50 text-red-700 border-red-200";
+
+                let iconType = "📂";
+                if (c.type.includes('未答复')) iconType = "⏳";
+                if (c.type.includes('不予提供')) iconType = "🚫";
+                if (c.type.includes('口头')) iconType = "📞";
+                if (c.type.includes('直接公开')) iconType = "📄";
+
+                return `
+                    <div onclick="openDossier(${c.id})" class="p-2.5 bg-slate-50 hover:bg-slate-100/80 rounded border border-slate-200 shadow-sm cursor-pointer transition flex items-center justify-between group">
+                        <div class="space-y-1 truncate pr-2">
+                            <div class="flex items-center gap-1.5">
+                                <span class="text-[9px] font-mono font-bold px-1 py-0.2 bg-slate-200 text-slate-800 rounded">NO.${c.id.toString().padStart(3, '0')}</span>
+                                <span class="text-xs font-bold text-slate-800 group-hover:text-blue-600 transition truncate">${c.applicant} → ${c.target}</span>
+                            </div>
+                            <div class="text-[10px] text-slate-500 truncate">
+                                ${iconType} <span class="font-semibold text-slate-700">[${c.type}]</span> ${c.desc}
+                            </div>
+                        </div>
+                        <div class="text-right flex flex-col items-end gap-1 shrink-0">
+                            <span class="text-[8px] text-slate-400 font-mono">${c.city} | ${c.date}</span>
+                            <span class="text-[9px] px-1.5 py-0.2 rounded-full border ${badgeColor} font-semibold">${c.is_legal}</span>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // 检索与下拉框复合过滤
+        function filterCases() {
+            const query = document.getElementById('searchInput').value.trim().toLowerCase();
+            const city = document.getElementById('cityFilter').value;
+            const legal = document.getElementById('legalFilter').value;
+
+            let filtered = rawCasesDatabase;
+
+            if (query) {
+                filtered = filtered.filter(c => 
+                    c.applicant.toLowerCase().includes(query) || 
+                    c.target.toLowerCase().includes(query) ||
+                    c.desc.toLowerCase().includes(query) ||
+                    c.type.toLowerCase().includes(query) ||
+                    c.type_eval.toLowerCase().includes(query) ||
+                    c.law_eval.toLowerCase().includes(query)
+                );
+            }
+
+            if (city) {
+                filtered = filtered.filter(c => c.city === city);
+            }
+
+            if (legal) {
+                filtered = filtered.filter(c => c.is_legal === legal);
+            }
+
+            renderCases(filtered);
+        }
+
+        // 红黑榜公文Tab标签页切换
+        function switchDocTab(tabName) {
+            const tabs = ['red', 'black', 'report'];
+            tabs.forEach(t => {
+                const el = document.getElementById(`tab-${t}`);
+                const btn = document.getElementById(`btn-tab-${t}`);
+                if (t === tabName) {
+                    el.classList.remove('hidden');
+                    if (t === 'red') {
+                        btn.className = "flex-1 py-3 text-center text-xs font-bold border-r border-slate-200 text-red-700 bg-white border-t-2 border-t-red-600";
+                    } else if (t === 'black') {
+                        btn.className = "flex-1 py-3 text-center text-xs font-bold border-r border-slate-200 text-slate-900 bg-white border-t-2 border-t-slate-800";
+                    } else {
+                        btn.className = "flex-1 py-3 text-center text-xs font-bold text-blue-700 bg-white border-t-2 border-t-blue-600";
+                    }
+                } else {
+                    el.classList.add('hidden');
+                    btn.className = "flex-1 py-3 text-center text-xs font-bold border-r border-slate-200 text-slate-500 hover:bg-slate-100";
+                }
+            });
+        }
+
+        // 专项分析Panel页切换
+        function switchAnalysisTab(tabName) {
+            const tabs = ['ent', 'proc'];
+            tabs.forEach(t => {
+                const el = document.getElementById(`panel-analysis-${t}`);
+                const btn = document.getElementById(`btn-analysis-${t}`);
+                if (t === tabName) {
+                    el.classList.remove('hidden');
+                    if (t === 'ent') {
+                        btn.className = "flex-1 py-3 text-center text-xs font-bold border-r border-slate-200 text-blue-700 bg-white border-t-2 border-t-blue-600";
+                    } else {
+                        btn.className = "flex-1 py-3 text-center text-xs font-bold text-blue-700 bg-white border-t-2 border-t-blue-600";
+                    }
+                } else {
+                    el.classList.add('hidden');
+                    btn.className = "flex-1 py-3 text-center text-xs font-bold border-r border-slate-200 text-slate-500 hover:bg-slate-100";
+                }
+            });
+        }
+
+        // 联动双开：点击分析面板典型案卷，直接运行过滤并弹出对应案卷抽屉
+        function openAndSearchCase(id) {
+            const c = rawCasesDatabase.find(item => item.id === id);
+            if (!c) return;
+
+            // 1. 还原输入项及过滤器
+            document.getElementById('searchInput').value = c.applicant;
+            document.getElementById('cityFilter').value = "";
+            document.getElementById('legalFilter').value = "";
+            
+            // 2. 运行过滤渲染
+            filterCases();
+
+            // 3. 打开抽屉
+            openDossier(id);
+
+            // 4. 滚动到该节点位置
+            document.getElementById('casesList').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // 打开行政法案卷抽屉 (Dossier Sheet)
+        let activeDossierId = null;
+        function openDossier(id) {
+            const c = rawCasesDatabase.find(item => item.id === id);
+            if (!c) return;
+
+            activeDossierId = id;
+
+            // 填充高保真公文属性
+            document.getElementById('drawer-case-id').textContent = `审计档案号：HB-CASE-2026-${id.toString().padStart(3, '0')}`;
+            document.getElementById('drawer-applicant').textContent = c.applicant;
+            document.getElementById('drawer-target').textContent = c.target;
+            document.getElementById('drawer-city').textContent = c.city;
+            document.getElementById('drawer-original-fact').textContent = c.desc;
+
+            // 评析剖析填充
+            document.getElementById('drawer-type-eval').innerHTML = `<b>回复性质：</b>${c.type_eval}`;
+            document.getElementById('drawer-law-eval').innerHTML = `<b>法条评估：</b>${c.law_eval} (依据条文：${c.code})`;
+            document.getElementById('drawer-proc-eval').innerHTML = `<b>程序时限：</b>${c.proc_eval} (申请：${c.date} / 答复：${c.reply_date})`;
+            document.getElementById('drawer-risk-tip').innerHTML = `<b>法治督查违法/瑕疵点：</b><span class="text-rose-600 font-semibold">${c.risk_tip}</span>`;
+            document.getElementById('drawer-relief').innerHTML = `<b>法定知情权利告知指引：</b>${c.relief}`;
+
+            const badge = document.getElementById('drawer-legal-badge');
+            badge.textContent = c.is_legal;
+            badge.className = "font-bold ml-1 px-2.5 py-0.5 rounded text-[11px] border";
+            if (c.is_legal === '合规') {
+                badge.classList.add('bg-emerald-50', 'text-emerald-700', 'border-emerald-200');
+            } else if (c.is_legal === '不当/瑕疵' || c.is_legal === '不当/机制') {
+                badge.classList.add('bg-amber-50', 'text-amber-700', 'border-amber-200');
+            } else {
+                badge.classList.add('bg-red-50', 'text-red-700', 'border-red-200');
+            }
+
+            // 打开滑块和遮罩
+            document.getElementById('dossierDrawer').classList.remove('translate-x-full');
+            document.getElementById('drawerOverlay').classList.remove('hidden');
+        }
+
+        // 关闭案卷抽屉
+        function closeDrawer() {
+            document.getElementById('dossierDrawer').classList.add('translate-x-full');
+            document.getElementById('drawerOverlay').classList.add('hidden');
+            activeDossierId = null;
+        }
+
+        // 复制案卷文本信息至剪贴板
+        function copyDossierToClipboard() {
+            if (!activeDossierId) return;
+            const c = rawCasesDatabase.find(item => item.id === activeDossierId);
+            
+            const textToCopy = `
+【湖北省政府信息公开审计卷宗 NO.${c.id}】
+申请主体：${c.applicant}
+被申请机关：${c.target}
+所属地市：${c.city}
+合规评估：${c.is_legal}
+定性评估：${c.type_eval}
+法律适用评析：${c.law_eval}
+程序时效：${c.proc_eval}
+违法瑕疵识别：${c.risk_tip}
+救济告知：${c.relief}
+            `.trim();
+
+            const textarea = document.createElement('textarea');
+            textarea.value = textToCopy;
+            textarea.style.position = 'fixed';
+            document.body.appendChild(textarea);
+            textarea.select();
+            
+            try {
+                document.execCommand('copy');
+                showToast(`已成功复制 NO.${c.id} 案卷审计结论到剪贴板！`);
+            } catch (err) {
+                showToast('复制失败，请手动选择复制。');
+            }
+            
+            document.body.removeChild(textarea);
+        }
+    </script>
+
+</body>
+</html>
+
+```
+
+
